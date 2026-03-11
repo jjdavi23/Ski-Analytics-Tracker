@@ -23,12 +23,13 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 - [ ] **Step 1.2: Base Architecture** 
   - 1.2a [x]: Set up the folder structure (models, screens, widgets, services, providers).
   - 1.2b [x]: Wrap MyApp in a ProviderScope.
-  - 1.2c: Update main.dart to initialize Firebase and wrap MyApp in a ProviderScope to enable Riverpod state management.
+  - 1.2c [x]: Update main.dart to initialize Firebase and wrap MyApp in a ProviderScope to enable Riverpod state management.
 
 ### Phase 2: Milestone 1 - The "Minimum Viable Product" (MVP) 
 *Goal: The core defining feature of the app must function with mock data or local state. Focus on functionality, not perfect styling yet*
-- [ ] **Step 2.1: Core Data Models**
-  - Create a series of Dart classes that are going to contain different components of ski setup(name, description, e.g., "Fischer SL + Swix Blue") and TrainingRun (manual time, date, snow condition, linked profile ID).
+- [x] **Step 2.1: Core Data Models**
+   Create three pure Dart classes, training_session.dart, equipment_profile.dart, and training_run.dart in the models folder. All must include copyWith, toMap, and fromMap methods.
+  
 - [ ] **Step 2.2: The Equipment Locker UI**
   - Build a screen allowing the athlete to view a list of their saved EquipmentProfiles, with the ability to add new profiles (e.g., "Fischer SL + Swix Blue") and delete old ones using mock data.
 - [ ] **Step 2.3: The Run Logger UI**
