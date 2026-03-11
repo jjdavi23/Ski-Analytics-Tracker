@@ -21,9 +21,9 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
   - Add flutter_riverpod, firebase_core, firebase_auth, cloud_firestore, and shared_preferences to pubspec.yaml.
   - Create a centralized ThemeData class in lib/theme.dart (colors, typography).
 - [ ] **Step 1.2: Base Architecture** 
-  - Set up the folder structure (models, screens, widgets, services, providers).
-  - Wrap MyApp in a ProviderScope.
-  - Update main.dart to initialize Firebase and wrap MyApp in a ProviderScope to enable Riverpod state management.
+  - 1.2a [x]: Set up the folder structure (models, screens, widgets, services, providers).
+  - 1.2b: Wrap MyApp in a ProviderScope.
+  - 1.2c: Update main.dart to initialize Firebase and wrap MyApp in a ProviderScope to enable Riverpod state management.
 
 ### Phase 2: Milestone 1 - The "Minimum Viable Product" (MVP) 
 *Goal: The core defining feature of the app must function with mock data or local state. Focus on functionality, not perfect styling yet*
