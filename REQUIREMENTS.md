@@ -49,7 +49,7 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 
   - 2.3b [x]: Build run_logger_screen.dart. 
   
-  - 2.3c: At the top of the run_logger_screen.dart file, allow the user to select an active TrainingSession or create a new one for the session. 
+  - 2.3c [x]: At the top of the run_logger_screen.dart file, allow the user to select an active TrainingSession or create a new one for the session. 
 
   - 2.3d: Below the session selector, build a custom NumpadWidget so that the user can put in their the run time.
   

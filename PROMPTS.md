@@ -5,7 +5,7 @@
  [x] 5. Read 'REQUIREMENTS.md' and implement step 2.1 and mark it completed in 'REQUIREMENTS.md'
  [x] 6. Read 'REQUIREMENTS.md' and implement step 2.2 and mark it completed in 'REQUIREMENTS.md'
  [x] 7. Read 'REQUIREMENTS.md' and implement step 2.3a and mark it completed in 'REQUIREMENTS.md'
- [x] 8. Read 'REQUIREMENTS.md' and implement step 2.3b and mark it completed in 'REQUIREMENTS.md'
- 
-
+  [x] 8. Read 'REQUIREMENTS.md' and implement step 2.3b and mark it completed in 'REQUIREMENTS.md'
+  [x] 9. Read 'REQUIREMENTS.md' and implement step 2.3c and mark it completed in 'REQUIREMENTS.md'
   
+ 
