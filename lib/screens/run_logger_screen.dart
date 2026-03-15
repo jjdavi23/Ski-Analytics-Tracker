@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/training_session.dart';
+import '../models/equipment_profile.dart';
+import '../models/training_run.dart';
 import '../providers/session_provider.dart';
 import '../providers/active_session_provider.dart';
+import '../providers/equipment_provider.dart';
+import '../providers/run_provider.dart';
 import '../widgets/numpad.dart';
 
 class RunLoggerScreen extends ConsumerStatefulWidget {
@@ -14,6 +18,7 @@ class RunLoggerScreen extends ConsumerStatefulWidget {
 
 class _RunLoggerScreenState extends ConsumerState<RunLoggerScreen> {
   String _timeInput = '';
+  EquipmentProfile? _selectedEquipment;
 
   void _handleKeyPress(String key) {
     setState(() {
@@ -37,10 +42,53 @@ class _RunLoggerScreenState extends ConsumerState<RunLoggerScreen> {
     });
   }
 
+  void _saveRun() {
+    final activeSession = ref.read(activeSessionProvider);
+    if (activeSession == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select or create a session first.')),
+      );
+      return;
+    }
+
+    if (_selectedEquipment == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select an equipment profile.')),
+      );
+      return;
+    }
+
+    final time = double.tryParse(_timeInput);
+    if (time == null || time <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid time.')),
+      );
+      return;
+    }
+
+    final newRun = TrainingRun(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      timeInSeconds: time,
+      sessionId: activeSession.id,
+      equipmentProfileId: _selectedEquipment!.id,
+    );
+
+    ref.read(runProvider.notifier).addRun(newRun);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Run saved successfully!')),
+    );
+
+    setState(() {
+      _timeInput = '';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final sessions = ref.watch(sessionProvider);
     final activeSession = ref.watch(activeSessionProvider);
+    final equipmentProfiles = ref.watch(equipmentProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -69,7 +117,7 @@ class _RunLoggerScreenState extends ConsumerState<RunLoggerScreen> {
                       }).toList(),
                       onChanged: (session) {
                         if (session != null) {
-                          ref.read(activeSessionProvider.notifier).state = session;
+                          ref.read(activeSessionProvider.notifier).setSession(session);
                         }
                       },
                     ),
@@ -106,7 +154,7 @@ class _RunLoggerScreenState extends ConsumerState<RunLoggerScreen> {
                       style: const TextStyle(
                         fontSize: 48,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'Courier', // Monospace for stability
+                        fontFamily: 'Courier',
                       ),
                     ),
                   ),
@@ -126,10 +174,47 @@ class _RunLoggerScreenState extends ConsumerState<RunLoggerScreen> {
             
             const SizedBox(height: 24),
             
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text('Equipment selection and Save will go here (Step 2.3e)'),
+            // Equipment Selector
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: DropdownButtonFormField<EquipmentProfile>(
+                value: _selectedEquipment,
+                decoration: const InputDecoration(
+                  labelText: 'Select Equipment',
+                  border: OutlineInputBorder(),
+                ),
+                items: equipmentProfiles.map((profile) {
+                  return DropdownMenuItem(
+                    value: profile,
+                    child: Text(profile.name),
+                  );
+                }).toList(),
+                onChanged: (profile) {
+                  setState(() {
+                    _selectedEquipment = profile;
+                  });
+                },
+              ),
             ),
+
+            const SizedBox(height: 24),
+
+            // Save Button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _saveRun,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Text('Save Run', style: TextStyle(fontSize: 18)),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -173,7 +258,7 @@ class _RunLoggerScreenState extends ConsumerState<RunLoggerScreen> {
                     snowCondition: snowConditionController.text,
                   );
                   ref.read(sessionProvider.notifier).addSession(newSession);
-                  ref.read(activeSessionProvider.notifier).state = newSession;
+                  ref.read(activeSessionProvider.notifier).setSession(newSession);
                   Navigator.pop(context);
                 }
               },

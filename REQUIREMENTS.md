@@ -53,7 +53,7 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 
   - 2.3d [x]: Below the session selector, build a custom NumpadWidget so that the user can put in their the run time.
   
-  - 2.3e: add a dropdown to select the current EquipmentProfile. Hitting save links the time, the gear, and the session together.
+  - 2.3e [x]: add a dropdown to select the current EquipmentProfile. Hitting save links the time, the gear, and the session together.
 
 - [ ] **Step 2.4: Analytics Dashboard UI**
 
