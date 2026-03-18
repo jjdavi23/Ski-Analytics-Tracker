@@ -61,11 +61,11 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
   
   - 2.4b [x]: When a session is selected, it filters all runs to match that session, groups them by gear used, and averages the times.
 
-  - 2.4c: Build analytics_screen.dart. 
+  - 2.4c [x]: Build analytics_screen.dart. 
   
-  - 2.4c: The user selects a TrainingSession from a dropdown.
+  - 2.4d [x]: The user selects a TrainingSession from a dropdown.
   
-  - 2.4e: The screen displays a ranked list of the setups used on that day from fastest to slowest, showing exactly which ski setup performed best on that specific session.
+  - 2.4e [x]: The screen displays a ranked list of the setups used on that day from fastest to slowest, showing exactly which ski setup performed best on that specific session.
 
 ### Phase 3: Milestone 2 - App Functionality and Integration (Auth & Database) 
 
