@@ -12,7 +12,9 @@
   [x] 12. Read 'REQUIREMENTS.md' and implement step 2.4a and mark it completed in 'REQUIREMENTS.md'
   [x] 13. Read 'REQUIREMENTS.md' and implement step 2.4b and mark it completed in 'REQUIREMENTS.md'
   [x] 14. Read 'REQUIREMENTS.md' and implement step 2.4c and mark it completed in 'REQUIREMENTS.md'
-  [] 15. Read 'REQUIREMENTS.md' and implement step 2.4d and mark it completed in 'REQUIREMENTS.md'
+  [x] 15. Read 'REQUIREMENTS.md' and implement step 2.4d and mark it completed in 'REQUIREMENTS.md'
+  [x] 16. Read 'REQUIREMENTS.md' and implement step 2.4e and mark it completed in 'REQUIREMENTS.md'
+  [x] 17. split up run_logger_screen, using Controller pattern, by making a new file in controllers called run_logger controller.dart
   
 
  

@@ -8,87 +8,18 @@ import '../providers/active_session_provider.dart';
 import '../providers/equipment_provider.dart';
 import '../providers/run_provider.dart';
 import '../widgets/numpad.dart';
+import '../controllers/run_logger_controller.dart';
 
-class RunLoggerScreen extends ConsumerStatefulWidget {
+class RunLoggerScreen extends ConsumerWidget {
   const RunLoggerScreen({super.key});
 
   @override
-  ConsumerState<RunLoggerScreen> createState() => _RunLoggerScreenState();
-}
-
-class _RunLoggerScreenState extends ConsumerState<RunLoggerScreen> {
-  String _timeInput = '';
-  EquipmentProfile? _selectedEquipment;
-
-  void _handleKeyPress(String key) {
-    setState(() {
-      if (key == '.' && _timeInput.contains('.')) return;
-      if (_timeInput.contains('.') && _timeInput.split('.')[1].length >= 2) return;
-      _timeInput += key;
-    });
-  }
-
-  void _handleDelete() {
-    setState(() {
-      if (_timeInput.isNotEmpty) {
-        _timeInput = _timeInput.substring(0, _timeInput.length - 1);
-      }
-    });
-  }
-
-  void _handleClear() {
-    setState(() {
-      _timeInput = '';
-    });
-  }
-
-  void _saveRun() {
-    final activeSession = ref.read(activeSessionProvider);
-    if (activeSession == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select or create a session first.')),
-      );
-      return;
-    }
-
-    if (_selectedEquipment == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an equipment profile.')),
-      );
-      return;
-    }
-
-    final time = double.tryParse(_timeInput);
-    if (time == null || time <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid time.')),
-      );
-      return;
-    }
-
-    final newRun = TrainingRun(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      timeInSeconds: time,
-      sessionId: activeSession.id,
-      equipmentProfileId: _selectedEquipment!.id,
-    );
-
-    ref.read(runProvider.notifier).addRun(newRun);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Run saved successfully!')),
-    );
-
-    setState(() {
-      _timeInput = '';
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final sessions = ref.watch(sessionProvider);
     final activeSession = ref.watch(activeSessionProvider);
     final equipmentProfiles = ref.watch(equipmentProvider);
+    final loggerState = ref.watch(runLoggerControllerProvider);
+    final loggerNotifier = ref.read(runLoggerControllerProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
@@ -150,7 +81,7 @@ class _RunLoggerScreenState extends ConsumerState<RunLoggerScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      _timeInput.isEmpty ? '00.00' : _timeInput,
+                      loggerState.timeInput.isEmpty ? '00.00' : loggerState.timeInput,
                       style: const TextStyle(
                         fontSize: 48,
                         fontWeight: FontWeight.bold,
@@ -166,9 +97,9 @@ class _RunLoggerScreenState extends ConsumerState<RunLoggerScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: NumpadWidget(
-                onKeyPressed: _handleKeyPress,
-                onDeletePressed: _handleDelete,
-                onClearPressed: _handleClear,
+                onKeyPressed: loggerNotifier.handleKeyPress,
+                onDeletePressed: loggerNotifier.handleDelete,
+                onClearPressed: loggerNotifier.handleClear,
               ),
             ),
             
@@ -178,7 +109,7 @@ class _RunLoggerScreenState extends ConsumerState<RunLoggerScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: DropdownButtonFormField<EquipmentProfile>(
-                value: _selectedEquipment,
+                value: loggerState.selectedEquipment,
                 decoration: const InputDecoration(
                   labelText: 'Select Equipment',
                   border: OutlineInputBorder(),
@@ -190,9 +121,7 @@ class _RunLoggerScreenState extends ConsumerState<RunLoggerScreen> {
                   );
                 }).toList(),
                 onChanged: (profile) {
-                  setState(() {
-                    _selectedEquipment = profile;
-                  });
+                  loggerNotifier.setSelectedEquipment(profile);
                 },
               ),
             ),
@@ -205,7 +134,29 @@ class _RunLoggerScreenState extends ConsumerState<RunLoggerScreen> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _saveRun,
+                  onPressed: () {
+                    final success = loggerNotifier.saveRun();
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Run saved successfully!')),
+                      );
+                    } else {
+                      // Logic check to provide more specific feedback
+                      if (activeSession == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Please select or create a session first.')),
+                        );
+                      } else if (loggerState.selectedEquipment == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Please select an equipment profile.')),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Please enter a valid time.')),
+                        );
+                      }
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
