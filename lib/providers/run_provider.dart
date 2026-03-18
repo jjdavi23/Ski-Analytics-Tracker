@@ -1,14 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/training_run.dart';
 
-
+//tells other screens about list of runs
 final runProvider = NotifierProvider<RunNotifier, List<TrainingRun>>(() {
   return RunNotifier();
 });
 
+//contains the actual data, and determines how it can be edited
 class RunNotifier extends Notifier<List<TrainingRun>> {
   
-  
+  //riverpod calls this when method when the app is opened
   @override
   List<TrainingRun> build() {
     return [
@@ -27,6 +28,9 @@ class RunNotifier extends Notifier<List<TrainingRun>> {
     ];
   }
 
+
+ //adds new run to the end of the run list
+ // spread operator (...) breaks down the list in order to add new run to end
   void addRun(TrainingRun run) {
     state = [...state, run];
   }

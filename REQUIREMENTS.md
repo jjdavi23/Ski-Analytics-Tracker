@@ -57,9 +57,9 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 
 - [ ] **Step 2.4: Analytics Dashboard UI**
 
-  - 2.4a: Make an analytics_provider.dart that looks at all my sessions, runs, and equipment. 
+  - 2.4a [x]: Make an analytics_provider.dart that looks at all my sessions, runs, and equipment. 
   
-  - 2.4b: When a session is selected, it filters all runs to match that session, groups them by gear used, and averages the times.
+  - 2.4b [x]: When a session is selected, it filters all runs to match that session, groups them by gear used, and averages the times.
 
   - 2.4c: Build analytics_screen.dart. 
   

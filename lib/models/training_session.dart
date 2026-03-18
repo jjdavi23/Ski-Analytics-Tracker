@@ -1,16 +1,18 @@
+//block of training
 class TrainingSession {
   final String id;
   final DateTime date;
   final String location;
   final String snowCondition;
 
+//things needed for TrainingSession object
   TrainingSession({
     required this.id,
     required this.date,
     required this.location,
     required this.snowCondition,
   });
-
+//Creates new copy if edits are made
   TrainingSession copyWith({
     String? id,
     DateTime? date,
@@ -25,6 +27,8 @@ class TrainingSession {
     );
   }
 
+  //converts data into text string for firestore
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -34,6 +38,7 @@ class TrainingSession {
     };
   }
 
+//converts back into object
   factory TrainingSession.fromMap(Map<String, dynamic> map) {
     return TrainingSession(
       id: map['id'] ?? '',

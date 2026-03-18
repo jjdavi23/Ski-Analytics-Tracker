@@ -1,10 +1,16 @@
+//class links time to training session to equipment profile 
 class TrainingRun {
+//stores id strings
   final String id;
   final double timeInSeconds;
   final String sessionId;
   final String equipmentProfileId;
 
+
+
   TrainingRun({
+
+    //all of these required for a run to be stored in the database
     required this.id,
     required this.timeInSeconds,
     required this.sessionId,
@@ -12,6 +18,7 @@ class TrainingRun {
   });
 
   TrainingRun copyWith({
+    //create a new TrainingRun object if you need to edit a run
     String? id,
     double? timeInSeconds,
     String? sessionId,
@@ -25,7 +32,9 @@ class TrainingRun {
     );
   }
 
+//conversion for firestore
   Map<String, dynamic> toMap() {
+
     return {
       'id': id,
       'timeInSeconds': timeInSeconds,
@@ -34,6 +43,7 @@ class TrainingRun {
     };
   }
 
+//conversion from firestore
   factory TrainingRun.fromMap(Map<String, dynamic> map) {
     return TrainingRun(
       id: map['id'] ?? '',
