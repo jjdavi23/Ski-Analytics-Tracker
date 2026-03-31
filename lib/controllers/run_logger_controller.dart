@@ -4,6 +4,7 @@ import '../models/training_run.dart';
 import '../providers/active_session_provider.dart';
 import '../providers/run_provider.dart';
 
+// 1. THE STATE
 class RunLoggerState {
   final String timeInput;
   final EquipmentProfile? selectedEquipment;
@@ -24,15 +25,19 @@ class RunLoggerState {
   }
 }
 
-final runLoggerControllerProvider =
-    StateNotifierProvider<RunLoggerController, RunLoggerState>((ref) {
-  return RunLoggerController(ref);
+// 2. THE PROVIDER (Modern 3.0 AutoDispose Syntax)
+final runLoggerControllerProvider = 
+    NotifierProvider<RunLoggerController, RunLoggerState>(() {
+  return RunLoggerController();
 });
 
-class RunLoggerController extends StateNotifier<RunLoggerState> {
-  final Ref _ref;
-
-  RunLoggerController(this._ref) : super(RunLoggerState());
+// 3. THE CONTROLLER
+class RunLoggerController extends Notifier<RunLoggerState> {
+  
+  @override
+  RunLoggerState build() {
+    return RunLoggerState(); // Starts empty
+  }
 
   void handleKeyPress(String key) {
     String currentInput = state.timeInput;
@@ -57,13 +62,16 @@ class RunLoggerController extends StateNotifier<RunLoggerState> {
     state = state.copyWith(selectedEquipment: profile);
   }
 
-  bool saveRun() {
-    final activeSession = _ref.read(activeSessionProvider);
-    if (activeSession == null) return false;
-    if (state.selectedEquipment == null) return false;
+  // Returns a specific error message if it fails, or null if it succeeds
+  String? saveRun() {
+    // In Riverpod 3.0 Notifiers, 'ref' is built-in automatically!
+    final activeSession = ref.read(activeSessionProvider);
+    
+    if (activeSession == null) return 'Please select or create a session first.';
+    if (state.selectedEquipment == null) return 'Please select your equipment.';
 
     final time = double.tryParse(state.timeInput);
-    if (time == null || time <= 0) return false;
+    if (time == null || time <= 0) return 'Please enter a valid time.';
 
     final newRun = TrainingRun(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -72,8 +80,8 @@ class RunLoggerController extends StateNotifier<RunLoggerState> {
       equipmentProfileId: state.selectedEquipment!.id,
     );
 
-    _ref.read(runProvider.notifier).addRun(newRun);
-    handleClear();
-    return true;
+    ref.read(runProvider.notifier).addRun(newRun);
+    handleClear(); //clear the numpad on success
+    return null; //null means no errors!
   }
 }

@@ -71,12 +71,10 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 
 *Goal: Complete major functionality and replace mock data with live cloud and authentication*
 
-- [ ] **Step 3.1: Firebase Authentication** 
+- [ ] **Step 3.1: Firebase Authentication (backend)** 
 
-  - Implement AuthService with at least two providers (Email/Password AND Google Sign-In).
-
-  - Create a LoginScreen and a RegistrationScreen.
-
+  - make a new file at lib/services/auth_service.dart that's dedicated to the firebase auth engine, and make methods for Email/Password login, new user registration, google sign-in and logging out, and only include backend logic(nothing with riverpod providers or widgets)
+  
 - [ ] **Step 3.2: The Auth Gate** 
 
   - Create an AuthGate widget that listens to the Firebase Auth state stream.

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/training_session.dart';
 import '../models/equipment_profile.dart';
-import '../models/training_run.dart';
+import '../models/training_run.dart'; 
 import '../providers/session_provider.dart';
 import '../providers/active_session_provider.dart';
 import '../providers/equipment_provider.dart';
@@ -135,26 +135,25 @@ class RunLoggerScreen extends ConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    final success = loggerNotifier.saveRun();
-                    if (success) {
+                    // 1. Call saveRun() and capture the String? it returns
+                    final errorMessage = loggerNotifier.saveRun();
+                    
+                    if (errorMessage == null) {
+                      // 2. If it returns null, there were no errors! Success!
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Run saved successfully!')),
+                        const SnackBar(
+                          content: Text('Run saved successfully!'), 
+                          backgroundColor: Colors.green,
+                        ),
                       );
                     } else {
-                      // Logic check to provide more specific feedback
-                      if (activeSession == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please select or create a session first.')),
-                        );
-                      } else if (loggerState.selectedEquipment == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please select an equipment profile.')),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please enter a valid time.')),
-                        );
-                      }
+                      // 3. If it returns a string, show that specific error message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(errorMessage), 
+                          backgroundColor: Colors.red,
+                        ),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
