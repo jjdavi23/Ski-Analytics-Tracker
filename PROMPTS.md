@@ -18,5 +18,6 @@
  [x] 18. create a main_screen.dart file in screens that acts as a container for my 3 main pages
  [x] 19. Read 'REQUIREMENTS.md' and implement step 3.1 and mark it completed in 'REQUIREMENTS.md'
  [x] 20. Read 'REQUIREMENTS.md' and implement step 3.2 and mark it completed in 'REQUIREMENTS.md'
+ [x] 21. Read 'REQUIREMENTS.md' and implement step 3.3 and mark it completed in 'REQUIREMENTS.md'
 
  

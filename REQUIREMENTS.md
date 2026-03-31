@@ -80,13 +80,10 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
   - 3.2 [x]:Now lets build the state management for auth service, make a new file at lib/controllers/auth_controller.dart with an updated riverpod 3.0 notifier that talks to authservice, and it should manage the loading states, catch any error messages that come from firebase and also show the current authenticated users state. 
 
 
-- [ ] **Step 3.3: Cloud Database Integration** 
+- [x] **Step 3.3: Login UI**
 
-  - Replace the mock service with a real DatabaseService thats connected to Firestore.
-
-  - Implement CRUD operations for the EquipmentProfile and TrainingRun models.
-
-  - Then Update Riverpod providers to listen to database streams and to fetch live data.
+  - 3.3 [x]: create a file at lib/screens/login_screen.dart and make it a ConsumerWidget with a textfield for an email, a password textfield, and a Sign In button. When Sign In button is pressed it should call the auth_controller to log in. Also add a text button at the bottom that says "Sign up". any error messages coming from the controller should be shown in a red snackbar.
+ 
 
 ### Phase 4: Polish & Persistence 
 
