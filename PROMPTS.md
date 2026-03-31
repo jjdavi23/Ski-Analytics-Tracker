@@ -17,5 +17,6 @@
   [x] 17. split up run_logger_screen, using Controller pattern, by making a new file in controllers called run_logger controller.dart
  [x] 18. create a main_screen.dart file in screens that acts as a container for my 3 main pages
  [x] 19. Read 'REQUIREMENTS.md' and implement step 3.1 and mark it completed in 'REQUIREMENTS.md'
- [] 20.
+ [x] 20. Read 'REQUIREMENTS.md' and implement step 3.2 and mark it completed in 'REQUIREMENTS.md'
+
  
