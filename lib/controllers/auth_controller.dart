@@ -2,102 +2,90 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/auth_service.dart';
 
+//service Provider
 final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService();
 });
 
-class AuthState {
-  final User? user;
+//auth Stream Provider (The AuthGate will listen to this to know when to show the Login screen)
+final authStateProvider = StreamProvider<User?>((ref) {
+  return ref.watch(authServiceProvider).user;
+});
+
+//controller State (Only handles loading UI now)
+class AuthControllerState {
   final bool isLoading;
-  final String? error;
-
-  AuthState({
-    this.user,
-    this.isLoading = false,
-    this.error,
-  });
-
-  AuthState copyWith({
-    User? user,
-    bool? isLoading,
-    String? error,
-  }) {
-    return AuthState(
-      user: user ?? this.user,
-      isLoading: isLoading ?? this.isLoading,
-      error: error, // If we pass null, it clears the error
-    );
-  }
+  AuthControllerState({this.isLoading = false});
 }
 
-final authControllerProvider = NotifierProvider<AuthNotifier, AuthState>(() {
+//controller Provider
+final authControllerProvider = NotifierProvider<AuthNotifier, AuthControllerState>(() {
   return AuthNotifier();
 });
 
-class AuthNotifier extends Notifier<AuthState> {
+//the Controller
+class AuthNotifier extends Notifier<AuthControllerState> {
   @override
-  AuthState build() {
-    // Initialize state and listen to auth changes
-    final authService = ref.watch(authServiceProvider);
-    
-    // We can't use an async listen here directly in build, 
-    // but we can initialize with the current user
-    return AuthState(user: FirebaseAuth.instance.currentUser);
+  AuthControllerState build() {
+    return AuthControllerState(); // Starts not loading
   }
 
-  // Helper to update state with loading
-  void _setLoading() {
-    state = state.copyWith(isLoading: true, error: null);
+  //helper to trigger loading spinners
+  void _setLoading(bool loading) {
+    state = AuthControllerState(isLoading: loading);
   }
 
-  // Helper to update state with error
-  void _setError(String message) {
-    state = state.copyWith(isLoading: false, error: message);
-  }
-
-  Future<void> signInWithEmail(String email, String password) async {
-    _setLoading();
+  //notice how these now return Future<String?> 
+  //null = success
+  //string = The clean error message to show in the UI SnackBar
+  Future<String?> signInWithEmail(String email, String password) async {
+    _setLoading(true);
     try {
-      final result = await ref.read(authServiceProvider).signInWithEmail(email, password);
-      state = state.copyWith(user: result?.user, isLoading: false);
+      await ref.read(authServiceProvider).signInWithEmail(email, password);
+      _setLoading(false);
+      return null; 
+    } on FirebaseAuthException catch (e) {
+      _setLoading(false);
+      return e.message ?? 'Login failed. Please try again.';
     } catch (e) {
-      _setError(e.toString());
+      _setLoading(false);
+      return e.toString();
     }
   }
 
-  Future<void> registerWithEmail(String email, String password) async {
-    _setLoading();
+  Future<String?> registerWithEmail(String email, String password) async {
+    _setLoading(true);
     try {
-      final result = await ref.read(authServiceProvider).registerWithEmail(email, password);
-      state = state.copyWith(user: result?.user, isLoading: false);
+      await ref.read(authServiceProvider).registerWithEmail(email, password);
+      _setLoading(false);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      _setLoading(false);
+      return e.message ?? 'Registration failed. Please try again.';
     } catch (e) {
-      _setError(e.toString());
+      _setLoading(false);
+      return e.toString();
     }
   }
 
-  Future<void> signInWithGoogle() async {
-    _setLoading();
+  Future<String?> signInWithGoogle() async {
+    _setLoading(true);
     try {
-      final result = await ref.read(authServiceProvider).signInWithGoogle();
-      state = state.copyWith(user: result?.user, isLoading: false);
+      await ref.read(authServiceProvider).signInWithGoogle();
+      _setLoading(false);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      _setLoading(false);
+      return e.message ?? 'Google Sign-In failed.';
     } catch (e) {
-      _setError(e.toString());
+      _setLoading(false);
+      return 'Google Sign-In was canceled or failed.';
     }
   }
 
   Future<void> signOut() async {
-    _setLoading();
-    try {
-      await ref.read(authServiceProvider).signOut();
-      state = AuthState(); // Reset state
-    } catch (e) {
-      _setError(e.toString());
-    }
-  }
-
-  // This should be called by the AuthGate or main entry point 
-  // to sync the User object whenever Firebase confirms a change
-  void onAuthStateChanged(User? user) {
-    state = state.copyWith(user: user, isLoading: false);
+    _setLoading(true);
+    await ref.read(authServiceProvider).signOut();
+    _setLoading(false);
   }
 }
