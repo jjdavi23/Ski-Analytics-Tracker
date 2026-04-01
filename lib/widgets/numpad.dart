@@ -18,11 +18,11 @@ class NumpadWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildRow(['1', '2', '3']),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         _buildRow(['4', '5', '6']),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         _buildRow(['7', '8', '9']),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         _buildRow(['.', '0', '⌫']),
       ],
     );
@@ -34,7 +34,7 @@ class NumpadWidget extends StatelessWidget {
       children: keys.map((key) {
         return Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 2),
             child: _buildKey(key),
           ),
         );
@@ -44,7 +44,7 @@ class NumpadWidget extends StatelessWidget {
 
   Widget _buildKey(String label) {
     return AspectRatio(
-      aspectRatio: 1.5,
+      aspectRatio: 2.5, // Increased from 1.5 to make buttons shorter
       child: ElevatedButton(
         onPressed: () {
           if (label == '⌫') {
@@ -57,12 +57,12 @@ class NumpadWidget extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(4),
           ),
         ),
         child: Text(
           label,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // Reduced from 24
         ),
       ),
     );

@@ -8,7 +8,7 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 2. **Architecture:** Maintain strict separation of concerns:
    * models: Pure Dart data classes (use json_serializable or freezed if helpful).
    * services: Backend/API communication only. No UI code.
-   * providers: Riverpod providers linking services to the UI.
+   * providers: Riverpod providers linking services to the UI using flutter_riverpod: ^3.3.1.
    * screens/widgets: UI only. Keep files small. Extract complex widgets into their own files.
 3. **Local Storage:** Use shared_preferences for local app state (e.g., theme toggles, default metric preferences).
 4. **Database:** Use Firebase Firestore for persistent cloud data.
@@ -84,6 +84,16 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 
   - 3.3 [x]: create a file at lib/screens/login_screen.dart and make it a ConsumerWidget with a textfield for an email, a password textfield, and a Sign In button. When Sign In button is pressed it should call the auth_controller to log in. Also add a text button at the bottom that says "Sign up". any error messages coming from the controller should be shown in a red snackbar.
  
+
+- [ ] **Step 3.4: Registration UI** 
+
+  - 3.4 []: create a registration screen for new users at lib/screens/registration_screen.dart, it should have email and password fields and a Create Account button that triggers the registration method in auth_controller if there are errors use a snackbar and clear the form if it works.
+
+- [x] **Step 3.5: Navigation Gate**
+
+  - 3.5 [x]: Time to wire up the secure routing, create a new file at lib/widgets/auth_gate.dart. 
+  This widget should listen to our Riverpod auth state. If the user is null (logged out), it should return the LoginScreen. If the user has data (logged in), it should return our existing MainScreen. 
+  
 
 ### Phase 4: Polish & Persistence 
 

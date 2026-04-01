@@ -30,7 +30,7 @@ class RunLoggerScreen extends ConsumerWidget {
           children: [
             // Session Selector
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Row(
                 children: [
                   Expanded(
@@ -38,6 +38,8 @@ class RunLoggerScreen extends ConsumerWidget {
                       value: activeSession,
                       decoration: const InputDecoration(
                         labelText: 'Active Session',
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                         border: OutlineInputBorder(),
                       ),
                       items: sessions.map((session) {
@@ -53,7 +55,7 @@ class RunLoggerScreen extends ConsumerWidget {
                       },
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 8),
                   IconButton(
                     icon: const Icon(Icons.add_circle),
                     onPressed: () => _showCreateSessionDialog(context, ref),
@@ -66,16 +68,16 @@ class RunLoggerScreen extends ConsumerWidget {
             
             // Time Display
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24.0),
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
               child: Column(
                 children: [
                   const Text(
                     'Run Time (s)',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(12),
@@ -83,7 +85,7 @@ class RunLoggerScreen extends ConsumerWidget {
                     child: Text(
                       loggerState.timeInput.isEmpty ? '00.00' : loggerState.timeInput,
                       style: const TextStyle(
-                        fontSize: 48,
+                        fontSize: 40,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Courier',
                       ),
@@ -95,7 +97,7 @@ class RunLoggerScreen extends ConsumerWidget {
 
             // Numpad
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
               child: NumpadWidget(
                 onKeyPressed: loggerNotifier.handleKeyPress,
                 onDeletePressed: loggerNotifier.handleDelete,
@@ -103,7 +105,7 @@ class RunLoggerScreen extends ConsumerWidget {
               ),
             ),
             
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
             
             // Equipment Selector
             Padding(
@@ -112,6 +114,8 @@ class RunLoggerScreen extends ConsumerWidget {
                 value: loggerState.selectedEquipment,
                 decoration: const InputDecoration(
                   labelText: 'Select Equipment',
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   border: OutlineInputBorder(),
                 ),
                 items: equipmentProfiles.map((profile) {
@@ -126,7 +130,7 @@ class RunLoggerScreen extends ConsumerWidget {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
             // Save Button
             Padding(
@@ -135,11 +139,9 @@ class RunLoggerScreen extends ConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // 1. Call saveRun() and capture the String? it returns
                     final errorMessage = loggerNotifier.saveRun();
                     
                     if (errorMessage == null) {
-                      // 2. If it returns null, there were no errors! Success!
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Run saved successfully!'), 
@@ -147,7 +149,6 @@ class RunLoggerScreen extends ConsumerWidget {
                         ),
                       );
                     } else {
-                      // 3. If it returns a string, show that specific error message
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(errorMessage), 
@@ -157,14 +158,14 @@ class RunLoggerScreen extends ConsumerWidget {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   child: const Text('Save Run', style: TextStyle(fontSize: 18)),
                 ),
               ),
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 20),
           ],
         ),
       ),

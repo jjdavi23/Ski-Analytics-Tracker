@@ -19,5 +19,8 @@
  [x] 19. Read 'REQUIREMENTS.md' and implement step 3.1 and mark it completed in 'REQUIREMENTS.md'
  [x] 20. Read 'REQUIREMENTS.md' and implement step 3.2 and mark it completed in 'REQUIREMENTS.md'
  [x] 21. Read 'REQUIREMENTS.md' and implement step 3.3 and mark it completed in 'REQUIREMENTS.md'
-
- 
+ [x] 22. Can you make it so the numpad is smaller so you dont need to scroll down to see the entire screen
+ [x] 23. Can you make is so the numpad is thinner horizontally
+[x] 25. Make it fit the screen but have slightly larger margins than it had previously on each side
+[x] 26. Read 'REQUIREMENTS.md' and implement step 3.4 and mark it completed in 'REQUIREMENTS.md'
+[x] 27. Read 'REQUIREMENTS.md' and implement step 3.5 and mark it completed in 'REQUIREMENTS.md'

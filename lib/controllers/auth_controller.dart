@@ -3,16 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/auth_service.dart';
 
 //service Provider
+//any provider can read the auth service when they call ref.read(authServiceProvider)
 final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService();
 });
 
-//auth Stream Provider (The AuthGate will listen to this to know when to show the Login screen)
+//auth Stream Provider the AuthGate listens to this to know when to show the Login screen
+//if user logs in, logs out, or their token expires this will update automatically
 final authStateProvider = StreamProvider<User?>((ref) {
   return ref.watch(authServiceProvider).user;
 });
 
-//controller State (Only handles loading UI now)
+//controller State 
 class AuthControllerState {
   final bool isLoading;
   AuthControllerState({this.isLoading = false});

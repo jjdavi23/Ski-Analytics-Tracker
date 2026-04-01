@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../controllers/auth_controller.dart';
-import 'registration_screen.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class RegistrationScreen extends ConsumerStatefulWidget {
+  const RegistrationScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -21,21 +20,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
-  Future<void> _handleSignIn() async {
+  Future<void> _handleRegister() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      _showErrorSnackBar('Please enter both email and password');
+      _showErrorSnackBar('Please fill in all fields');
       return;
     }
 
     final errorMessage = await ref
         .read(authControllerProvider.notifier)
-        .signInWithEmail(email, password);
+        .registerWithEmail(email, password);
 
     if (errorMessage != null && mounted) {
       _showErrorSnackBar(errorMessage);
+    } else if (mounted) {
+      // Clear form on success
+      _emailController.clear();
+      _passwordController.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Account created successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      // Navigate back to login
+      Navigator.of(context).pop();
     }
   }
 
@@ -54,7 +65,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Create Account'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -82,24 +93,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: authState.isLoading ? null : _handleSignIn,
+                onPressed: authState.isLoading ? null : _handleRegister,
                 child: authState.isLoading
                     ? const SizedBox(
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Sign In'),
+                    : const Text('Create Account'),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const RegistrationScreen()),
-                );
-              },
-              child: const Text('Sign up'),
             ),
           ],
         ),

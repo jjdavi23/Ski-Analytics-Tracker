@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late final FirebaseAuth _auth = FirebaseAuth.instance;
   
   // FIX 1: Use the global instance instead of an unnamed constructor
-  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  late final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
   // Auth change user stream
   Stream<User?> get user => _auth.authStateChanges();
