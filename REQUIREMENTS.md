@@ -132,9 +132,9 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 
   - Configure the "background" to show a red trash icon and wire the onDismissed property to the deleteRun method created in 4.3.
 
-- [ ] **Step 4.5: Analytics - Chart Infrastructure**
+- [x] **Step 4.5: Analytics - Chart Infrastructure**
 
-  - Add the fl_chart dependency to pubspec.yaml.
+  - 4.5 [x]: Add the fl_chart dependency to pubspec.yaml.
 
   - Create a simple, standalone RunChartWidget in lib/widgets/ that accepts a list of TrainingRun objects and displays a basic line graph of Time vs Run Number.
 
