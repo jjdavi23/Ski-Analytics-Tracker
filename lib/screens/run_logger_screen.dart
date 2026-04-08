@@ -7,6 +7,7 @@ import '../providers/equipment_provider.dart';
 import '../widgets/numpad.dart';
 import '../widgets/sync_error_widget.dart';
 import '../widgets/run_logger/session_selector.dart' as logger;
+import '../widgets/run_logger/run_time_display.dart';
 import '../controllers/run_logger_controller.dart';
 
 class RunLoggerScreen extends ConsumerWidget {
@@ -19,10 +20,7 @@ class RunLoggerScreen extends ConsumerWidget {
     final equipmentProfilesAsync = ref.watch(equipmentProvider);
     final activeSession = ref.watch(activeSessionProvider);
     
-    // 2. Performance Optimization: Only watch timeInput for the display.
-    final timeDisplayStr = ref.watch(runLoggerControllerProvider.select((s) => s.timeInput));
-    
-    // 3. Watch the full state for the Save Button's logic
+    // 2. Watch the full state for the Save Button's logic
     final loggerState = ref.watch(runLoggerControllerProvider);
     final loggerNotifier = ref.read(runLoggerControllerProvider.notifier);
 
@@ -59,34 +57,7 @@ class RunLoggerScreen extends ConsumerWidget {
             const Divider(),
             
             // --- Time Display ---
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: Column(
-                children: [
-                  const Text(
-                    'Run Time (s)',
-                    style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: Text(
-                      timeDisplayStr.isEmpty ? '00.00' : timeDisplayStr,
-                      style: const TextStyle(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Courier', 
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const RunTimeDisplay(),
 
             // --- Numpad ---
             Padding(
