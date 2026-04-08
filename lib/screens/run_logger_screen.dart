@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/equipment_profile.dart';
 import '../providers/session_provider.dart';
 import '../providers/active_session_provider.dart'; 
 import '../providers/equipment_provider.dart';
@@ -8,6 +7,7 @@ import '../widgets/numpad.dart';
 import '../widgets/sync_error_widget.dart';
 import '../widgets/run_logger/session_selector.dart' as logger;
 import '../widgets/run_logger/run_time_display.dart';
+import '../widgets/run_logger/equipment_selector.dart';
 import '../controllers/run_logger_controller.dart';
 
 class RunLoggerScreen extends ConsumerWidget {
@@ -72,15 +72,7 @@ class RunLoggerScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             
             // --- Equipment Selector ---
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: equipmentProfilesAsync.when(
-                skipLoadingOnRefresh: true,
-                data: (profiles) => _buildEquipmentDropdown(ref, profiles, loggerState),
-                loading: () => const Text('Loading equipment...'),
-                error: (e, st) => const Text('Error loading equipment'),
-              ),
-            ),
+            const EquipmentSelector(),
 
             const SizedBox(height: 24),
 
@@ -134,30 +126,6 @@ class RunLoggerScreen extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-
-  // --- Helper: Equipment Dropdown UI ---
-  Widget _buildEquipmentDropdown(WidgetRef ref, List<EquipmentProfile> profiles, RunLoggerState loggerState) {
-    final bool exists = profiles.any((p) => p.id == loggerState.selectedEquipmentId);
-    
-    return DropdownButtonFormField<String>(
-      value: exists ? loggerState.selectedEquipmentId : null,
-      decoration: const InputDecoration(
-        labelText: 'Select Equipment',
-        isDense: true,
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        border: OutlineInputBorder(),
-      ),
-      items: profiles.map((profile) {
-        return DropdownMenuItem(
-          value: profile.id,
-          child: Text(profile.name),
-        );
-      }).toList(),
-      onChanged: (equipmentId) {
-        ref.read(runLoggerControllerProvider.notifier).setSelectedEquipmentId(equipmentId);
-      },
     );
   }
 }
