@@ -51,4 +51,7 @@
     -Use the SyncErrorWidget for error states and skipLoadingOnRefresh: true to keep the UI snappy.
 
 [x] 37. Create a new file lib/widgets/analytics/ranked_equipment_list.dart. Move the _AnalyticsCard class and the logic that displays the "Ranked Setups" section from AnalyticsScreen into a new ConsumerWidget called RankedEquipmentList. Since this is used inside a CustomScrollView, this widget must return a SliverList (for the cards) and a SliverToBoxAdapter (for the "Ranked Setups" header), and it should watch the analyticsProvider.
+
 [x] 38. Create a new file lib/widgets/analytics/run_history_list.dart. Move the runsAsync.when logic from AnalyticsScreen into a new ConsumerWidget called RunHistoryList. Move the Dismissible delete logic and the _showEditTimeDialog method into this new file. This widget must return slivers so it works inside a CustomScrollView, and it needs to watch runProvider, equipmentProvider, and activeSessionProvider.
+
+[x] 39. Refactor lib/screens/analytics_screen.dart. Replace the inline logic with the new SessionSelector, RankedEquipmentList, and RunHistoryList widgets. Remove all the old helper classes and dialog methods that were moved to the new widgets. The build method should now be a clean Scaffold where the CustomScrollView simply lists these three components.

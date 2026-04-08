@@ -39,9 +39,11 @@ class RunHistoryList extends ConsumerWidget {
 
             if (sessionRuns.isEmpty) {
               return const SliverToBoxAdapter(
-                child: Center(
+                child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 32),
-                  child: Text('No individual runs found.'),
+                  child: Center(
+                    child: Text('No individual runs found.'),
+                  ),
                 ),
               );
             }
