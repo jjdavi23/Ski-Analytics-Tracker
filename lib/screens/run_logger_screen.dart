@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/training_session.dart';
 import '../models/equipment_profile.dart';
 import '../providers/session_provider.dart';
 import '../providers/active_session_provider.dart'; 
 import '../providers/equipment_provider.dart';
 import '../widgets/numpad.dart';
 import '../widgets/sync_error_widget.dart';
+import '../widgets/run_logger/session_selector.dart' as logger;
 import '../controllers/run_logger_controller.dart';
 
 class RunLoggerScreen extends ConsumerWidget {
@@ -55,29 +55,7 @@ class RunLoggerScreen extends ConsumerWidget {
             if (isGlobalLoading) const LinearProgressIndicator(),
             
             // --- Session Selector ---
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: sessionsAsync.when(
-                      skipLoadingOnRefresh: true,
-                      data: (sessions) => _buildSessionDropdown(context, ref, sessions, activeSession),
-                      loading: () => const Text('Loading sessions...'),
-                      error: (e, st) => const Text('Error loading sessions'),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(Icons.add_circle, color: Colors.blueGrey),
-                    onPressed: () {
-                      Future.microtask(() => _showCreateSessionDialog(context, ref));
-                    },
-                    tooltip: 'Create New Session',
-                  ),
-                ],
-              ),
-            ),
+            const logger.SessionSelector(),
             const Divider(),
             
             // --- Time Display ---
@@ -188,30 +166,6 @@ class RunLoggerScreen extends ConsumerWidget {
     );
   }
 
-  // --- Helper: Session Dropdown UI ---
-  Widget _buildSessionDropdown(BuildContext context, WidgetRef ref, List<TrainingSession> sessions, TrainingSession? activeSession) {
-    return DropdownButtonFormField<String>(
-      value: sessions.any((s) => s.id == activeSession?.id) ? activeSession?.id : null,
-      decoration: const InputDecoration(
-        labelText: 'Active Session',
-        isDense: true,
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        border: OutlineInputBorder(),
-      ),
-      items: sessions.map((session) {
-        return DropdownMenuItem(
-          value: session.id,
-          child: Text('${session.location} (${session.snowCondition})'),
-        );
-      }).toList(),
-      onChanged: (sessionId) {
-        if (sessionId != null) {
-          ref.read(sessionIdProvider.notifier).setSessionId(sessionId);
-        }
-      },
-    );
-  }
-
   // --- Helper: Equipment Dropdown UI ---
   Widget _buildEquipmentDropdown(WidgetRef ref, List<EquipmentProfile> profiles, RunLoggerState loggerState) {
     final bool exists = profiles.any((p) => p.id == loggerState.selectedEquipmentId);
@@ -232,55 +186,6 @@ class RunLoggerScreen extends ConsumerWidget {
       }).toList(),
       onChanged: (equipmentId) {
         ref.read(runLoggerControllerProvider.notifier).setSelectedEquipmentId(equipmentId);
-      },
-    );
-  }
-
-  void _showCreateSessionDialog(BuildContext context, WidgetRef ref) {
-    final locationController = TextEditingController();
-    final snowConditionController = TextEditingController();
-
-    showDialog(
-      context: context,
-      barrierDismissible: false, 
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('New Training Session'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: locationController,
-                decoration: const InputDecoration(labelText: 'Location (e.g. Whiteface)'),
-              ),
-              TextField(
-                controller: snowConditionController,
-                decoration: const InputDecoration(labelText: 'Snow (e.g. Firm/Icy)'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () {
-                if (locationController.text.isNotEmpty && snowConditionController.text.isNotEmpty) {
-                  final newSession = TrainingSession(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    date: DateTime.now(),
-                    location: locationController.text,
-                    snowCondition: snowConditionController.text,
-                  );
-                  
-                  ref.read(sessionProvider.notifier).addSession(newSession);
-                  ref.read(sessionIdProvider.notifier).setSessionId(newSession.id);
-                  
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('Create'),
-            ),
-          ],
-        );
       },
     );
   }
