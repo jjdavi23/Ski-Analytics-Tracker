@@ -8,6 +8,7 @@ import '../widgets/sync_error_widget.dart';
 import '../widgets/run_logger/session_selector.dart' as logger;
 import '../widgets/run_logger/run_time_display.dart';
 import '../widgets/run_logger/equipment_selector.dart';
+import '../widgets/run_logger/save_run_button.dart';
 import '../controllers/run_logger_controller.dart';
 
 class RunLoggerScreen extends ConsumerWidget {
@@ -18,10 +19,8 @@ class RunLoggerScreen extends ConsumerWidget {
     // 1. Data Streams
     final sessionsAsync = ref.watch(sessionProvider);
     final equipmentProfilesAsync = ref.watch(equipmentProvider);
-    final activeSession = ref.watch(activeSessionProvider);
     
-    // 2. Watch the full state for the Save Button's logic
-    final loggerState = ref.watch(runLoggerControllerProvider);
+    // 2. Watch the full state for the Controller logic
     final loggerNotifier = ref.read(runLoggerControllerProvider.notifier);
 
     // Global loading indicator
@@ -77,50 +76,7 @@ class RunLoggerScreen extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // --- Save Button ---
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: (activeSession == null || loggerState.isLoading) ? null : () async {
-                    final errorMessage = await loggerNotifier.saveRun();
-                    
-                    if (context.mounted) {
-                      if (errorMessage == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Run logged!'), 
-                            backgroundColor: Colors.green,
-                            duration: Duration(milliseconds: 800),
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
-                        );
-                      }
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: loggerState.isLoading 
-                    ? const SizedBox(
-                        height: 20, width: 20, 
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
-                      )
-                    : const Text('Save Run', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                ),
-              ),
-            ),
-            if (activeSession == null)
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text("Select a session before saving", style: TextStyle(color: Colors.red, fontSize: 12)),
-              ),
+            const SaveRunButton(),
 
             const SizedBox(height: 40),
           ],
