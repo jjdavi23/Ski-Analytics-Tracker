@@ -44,10 +44,10 @@
 [x] 33. Read 'REQUIREMENTS.md' and implement step 4.3 and mark it completed in 'REQUIREMENTS.md'
 [x] 34. Read 'REQUIREMENTS.md' and implement step 4.4 and mark it completed in 'REQUIREMENTS.md'
 [x] 35. in the analytics screen instead under run history instead of swiping to delete add a button to delete and a button to edit the time, and make it so when you edit the time or delete it updates the calculated average shown for the selected setup
-[] 36. Create a new file lib/widgets/analytics/session_selector.dart and move the sessionsAsync.when dropdown logic from AnalyticsScreen into a new ConsumerWidget called SessionSelector.
+[x] 36. Create a new file lib/widgets/analytics/session_selector.dart and move the sessionsAsync.when dropdown logic from AnalyticsScreen into a new ConsumerWidget called SessionSelector.
 
     - It should watch sessionProvider, activeSessionProvider, and use sessionIdProvider.notifier to update the selection.
 
     -Use the SyncErrorWidget for error states and skipLoadingOnRefresh: true to keep the UI snappy.
 
-    
+[ ] 37. Create a new file lib/widgets/analytics/ranked_equipment_list.dart. Move the _AnalyticsCard class and the logic that displays the "Ranked Setups" section from AnalyticsScreen into a new ConsumerWidget called RankedEquipmentList. Since this is used inside a CustomScrollView, this widget must return a SliverList (for the cards) and a SliverToBoxAdapter (for the "Ranked Setups" header), and it should watch the analyticsProvider.

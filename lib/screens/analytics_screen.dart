@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/training_session.dart';
 import '../models/training_run.dart';
 import '../providers/session_provider.dart';
 import '../providers/active_session_provider.dart';
@@ -9,13 +8,13 @@ import '../providers/run_provider.dart';
 import '../providers/equipment_provider.dart';
 import '../widgets/sync_error_widget.dart';
 import '../models/equipment_profile.dart';
+import '../widgets/analytics/session_selector.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sessionsAsync = ref.watch(sessionProvider);
     final activeSession = ref.watch(activeSessionProvider);
     final analytics = ref.watch(analyticsProvider);
     final runsAsync = ref.watch(runProvider);
@@ -25,38 +24,7 @@ class AnalyticsScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('Analytics Dashboard')),
       body: Column(
         children: [
-          if (sessionsAsync.isLoading && !sessionsAsync.hasValue)
-            const LinearProgressIndicator(),
-            
-          sessionsAsync.when(
-            skipLoadingOnRefresh: true,
-            data: (sessions) => Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: DropdownButtonFormField<String>(
-                value: sessions.any((s) => s.id == activeSession?.id) ? activeSession?.id : null,
-                decoration: const InputDecoration(
-                  labelText: 'Select Training Session',
-                  border: OutlineInputBorder(),
-                ),
-                items: sessions.map((session) {
-                  return DropdownMenuItem(
-                    value: session.id,
-                    child: Text('${session.location} (${session.date.month}/${session.date.day})'),
-                  );
-                }).toList(),
-                onChanged: (sessionId) {
-                  if (sessionId != null) {
-                    ref.read(sessionIdProvider.notifier).setSessionId(sessionId);
-                  }
-                },
-              ),
-            ),
-            loading: () => const SizedBox.shrink(),
-            error: (err, stack) => SyncErrorWidget(
-              message: 'Failed to load sessions',
-              onRetry: () => ref.invalidate(sessionProvider),
-            ),
-          ),
+          const SessionSelector(),
           const Divider(),
           
           Expanded(
@@ -105,11 +73,9 @@ class AnalyticsScreen extends ConsumerWidget {
 
                           if (sessionRuns.isEmpty) {
                             return const SliverToBoxAdapter(
-                              child: Padding(
+                              child: Center(
                                 padding: EdgeInsets.symmetric(vertical: 32),
-                                child: Center(
-                                  child: Text('No individual runs found.'),
-                                ),
+                                child: Text('No individual runs found.'),
                               ),
                             );
                           }
