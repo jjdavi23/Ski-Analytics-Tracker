@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/equipment_provider.dart';
+import '../widgets/sync_error_widget.dart';
 
 class EquipmentLockerScreen extends ConsumerWidget {
   const EquipmentLockerScreen({super.key});
@@ -13,30 +14,44 @@ class EquipmentLockerScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Equipment Locker'),
       ),
-      body: profilesAsync.when(
-        data: (profiles) => profiles.isEmpty
-            ? const Center(child: Text('No equipment profiles yet. Add one!'))
-            : ListView.builder(
-                itemCount: profiles.length,
-                itemBuilder: (context, index) {
-                  final profile = profiles[index];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: ListTile(
-                      title: Text(profile.name),
-                      subtitle: Text(profile.description),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          ref.read(equipmentProvider.notifier).deleteProfile(profile.id);
-                        },
-                      ),
+      body: Column(
+        children: [
+          // Non-blocking loading indicator at the top
+          if (profilesAsync.isLoading && !profilesAsync.hasValue)
+            const LinearProgressIndicator(),
+            
+          Expanded(
+            child: profilesAsync.when(
+              skipLoadingOnRefresh: true,
+              data: (profiles) => profiles.isEmpty
+                  ? const Center(child: Text('No equipment profiles yet. Add one!'))
+                  : ListView.builder(
+                      itemCount: profiles.length,
+                      itemBuilder: (context, index) {
+                        final profile = profiles[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          child: ListTile(
+                            title: Text(profile.name),
+                            subtitle: Text(profile.description),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                ref.read(equipmentProvider.notifier).deleteProfile(profile.id);
+                              },
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
+              loading: () => const Center(child: Text('Connecting to Locker...')),
+              error: (e, st) => SyncErrorWidget(
+                message: 'Failed to access Locker',
+                onRetry: () => ref.invalidate(equipmentProvider),
               ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('Error: $e')),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddProfileDialog(context, ref),

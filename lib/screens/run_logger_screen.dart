@@ -6,6 +6,7 @@ import '../providers/session_provider.dart';
 import '../providers/active_session_provider.dart'; 
 import '../providers/equipment_provider.dart';
 import '../widgets/numpad.dart';
+import '../widgets/sync_error_widget.dart';
 import '../controllers/run_logger_controller.dart';
 
 class RunLoggerScreen extends ConsumerWidget {
@@ -25,6 +26,24 @@ class RunLoggerScreen extends ConsumerWidget {
     final loggerState = ref.watch(runLoggerControllerProvider);
     final loggerNotifier = ref.read(runLoggerControllerProvider.notifier);
 
+    // Global loading indicator
+    final bool isGlobalLoading = (sessionsAsync.isLoading && !sessionsAsync.hasValue) || 
+                                (equipmentProfilesAsync.isLoading && !equipmentProfilesAsync.hasValue);
+
+    // Global error check
+    if (sessionsAsync.hasError || equipmentProfilesAsync.hasError) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Run Logger')),
+        body: SyncErrorWidget(
+          message: 'Connection issues on the mountain',
+          onRetry: () {
+            ref.invalidate(sessionProvider);
+            ref.invalidate(equipmentProvider);
+          },
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Run Logger'),
@@ -33,6 +52,8 @@ class RunLoggerScreen extends ConsumerWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            if (isGlobalLoading) const LinearProgressIndicator(),
+            
             // --- Session Selector ---
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -40,11 +61,10 @@ class RunLoggerScreen extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: sessionsAsync.when(
+                      skipLoadingOnRefresh: true,
                       data: (sessions) => _buildSessionDropdown(context, ref, sessions, activeSession),
-                      loading: () => sessionsAsync.hasValue 
-                        ? _buildSessionDropdown(context, ref, sessionsAsync.value!, activeSession)
-                        : const LinearProgressIndicator(),
-                      error: (e, st) => Text('Error: $e'),
+                      loading: () => const Text('Loading sessions...'),
+                      error: (e, st) => const Text('Error loading sessions'),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -106,11 +126,10 @@ class RunLoggerScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: equipmentProfilesAsync.when(
+                skipLoadingOnRefresh: true,
                 data: (profiles) => _buildEquipmentDropdown(ref, profiles, loggerState),
-                loading: () => equipmentProfilesAsync.hasValue
-                  ? _buildEquipmentDropdown(ref, equipmentProfilesAsync.value!, loggerState)
-                  : const LinearProgressIndicator(),
-                error: (e, st) => Text('Error loading equipment: $e'),
+                loading: () => const Text('Loading equipment...'),
+                error: (e, st) => const Text('Error loading equipment'),
               ),
             ),
 
@@ -195,7 +214,6 @@ class RunLoggerScreen extends ConsumerWidget {
 
   // --- Helper: Equipment Dropdown UI ---
   Widget _buildEquipmentDropdown(WidgetRef ref, List<EquipmentProfile> profiles, RunLoggerState loggerState) {
-    // FIX: Match by ID and ensure value is null if ID not found in current items
     final bool exists = profiles.any((p) => p.id == loggerState.selectedEquipmentId);
     
     return DropdownButtonFormField<String>(

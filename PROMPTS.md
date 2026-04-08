@@ -40,3 +40,5 @@
     Strict rule: Do not store the whole Session object in memory; only the ID. This keeps it so the active session data is always synced with the live Firestore stream.
 
 [x] 31. When I create another equipment setups and then return to the logger screen after saving runs with a different setup, it gives an error that says there should be exactly 1 equipment profile, can you update the connection between the equipment locker screen and the run logger screen so that It doesnt automatically try to select the new equipment profile?     
+[x] 32. Read 'REQUIREMENTS.md' and implement step 4.2 and mark it completed in 'REQUIREMENTS.md'
+

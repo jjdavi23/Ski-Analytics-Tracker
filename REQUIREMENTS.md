@@ -111,11 +111,14 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 
 - [x] **Step 4.1: Local State (Shared Preferences)** 
 
-  - 4.1 [x]: Implement a feature that saves to the local device (for example: persisting a "Dark Mode" toggle or a user's default/most common snow condition)
+  - 4.1 [x]: Implement a feature that saves to the local device 
 
-- [ ] **Step 4.2: Error Handling & Loading States** 
+- [x] **Step 4.2: Error Handling & Loading States** 
 
-  - Ensure all asynchronous Riverpod providers correctly handle loading and error states in the UI using AsyncValue.when()`.
+  - 4.2 [x]:Implement a standardized AsyncValue.when() pattern across all data-driven screens (Analytics, Equipment Locker, etc.) to handle Firestore streams. 
+  Initial Load: Show a non-blocking loading indicator (like a LinearProgressIndicator at the top) rather than a full-screen spinner.
+  Silent Refresh: Use hasValue logic to ensure that when data updates in the background, the existing UI doesn't "blank out" or revert to a loading state.
+  Error Handling: Create a user-friendly error widget that displays a clear message (e.g., "Connection lost on the mountain") and includes a "Retry" button that invalidates the provider to try again.
 
 - [ ] **Step 4.3: Final Theming & Cleanup** 
 

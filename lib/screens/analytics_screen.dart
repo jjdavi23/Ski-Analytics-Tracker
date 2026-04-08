@@ -4,6 +4,7 @@ import '../models/training_session.dart';
 import '../providers/session_provider.dart';
 import '../providers/active_session_provider.dart';
 import '../providers/analytics_provider.dart';
+import '../widgets/sync_error_widget.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
@@ -16,59 +17,63 @@ class AnalyticsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Analytics Dashboard')),
-      body: sessionsAsync.when(
-        data: (sessions) => Column(
-          children: [
-            Padding(
+      body: Column(
+        children: [
+          // Non-blocking loading indicator at the top
+          if (sessionsAsync.isLoading && !sessionsAsync.hasValue)
+            const LinearProgressIndicator(),
+            
+          sessionsAsync.when(
+            skipLoadingOnRefresh: true, // Standard Riverpod pattern for silent refresh
+            data: (sessions) => Padding(
               padding: const EdgeInsets.all(16.0),
-              child: DropdownButtonFormField<TrainingSession>(
-                // Ensure the value exists in the list to avoid dropdown errors
-                value: sessions.any((s) => s.id == activeSession?.id) ? activeSession : null,
+              child: DropdownButtonFormField<String>(
+                value: sessions.any((s) => s.id == activeSession?.id) ? activeSession?.id : null,
                 decoration: const InputDecoration(
                   labelText: 'Select Training Session',
                   border: OutlineInputBorder(),
                 ),
                 items: sessions.map((session) {
                   return DropdownMenuItem(
-                    value: session,
+                    value: session.id,
                     child: Text('${session.location} (${session.date.month}/${session.date.day})'),
                   );
                 }).toList(),
-                onChanged: (session) {
-                  if (session != null) {
-                    ref.read(sessionIdProvider.notifier).setSessionId(session.id);
+                onChanged: (sessionId) {
+                  if (sessionId != null) {
+                    ref.read(sessionIdProvider.notifier).setSessionId(sessionId);
                   }
                 },
               ),
             ),
-            const Divider(),
-            
-            Expanded(
-              child: activeSession == null
-                  ? const Center(child: Text('Select a session to view analytics'))
-                  : analytics.isEmpty
-                      ? const Center(child: Text('No runs recorded for this session'))
-                      : ListView.builder(
-                          itemCount: analytics.length,
-                          itemBuilder: (context, index) {
-                            final item = analytics[index];
-                            final isFastest = index == 0;
-                            // This was the missing link!
-                            return _AnalyticsCard(item: item, index: index, isFastest: isFastest);
-                          },
-                        ),
+            loading: () => const SizedBox.shrink(), // Handled by the top indicator
+            error: (err, stack) => SyncErrorWidget(
+              message: 'Failed to load sessions',
+              onRetry: () => ref.invalidate(sessionProvider),
             ),
-          ],
-        ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
+          ),
+          const Divider(),
+          
+          Expanded(
+            child: activeSession == null
+                ? const Center(child: Text('Select a session to view analytics'))
+                : analytics.isEmpty
+                    ? const Center(child: Text('No runs recorded for this session'))
+                    : ListView.builder(
+                        itemCount: analytics.length,
+                        itemBuilder: (context, index) {
+                          final item = analytics[index];
+                          final isFastest = index == 0;
+                          return _AnalyticsCard(item: item, index: index, isFastest: isFastest);
+                        },
+                      ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// --- MISSING WIDGET DEFINITION ---
-// This is a private helper widget to keep the build method above clean.
 class _AnalyticsCard extends StatelessWidget {
   final EquipmentAnalytics item;
   final int index;
@@ -84,7 +89,7 @@ class _AnalyticsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: isFastest ? Colors.green.withOpacity(0.1) : null,
+      color: isFastest ? Colors.green.withValues(alpha: 0.1) : null,
       elevation: isFastest ? 4 : 1,
       child: ListTile(
         leading: CircleAvatar(
