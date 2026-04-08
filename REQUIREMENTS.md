@@ -95,11 +95,23 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
   This widget should listen to our Riverpod auth state. If the user is null (logged out), it should return the LoginScreen. If the user has data (logged in), it should return our existing MainScreen. 
   
 
+- [x] **Step 3.6: The Database Service**
+
+  - 3.6 [x]: Let's set up our backend database engine. create lib/services/database_service.dart 
+  I need this file to handle pure Firestore CRUD operations (Create, Read, Update, Delete) for our three models: EquipmentProfile, TrainingSession, and TrainingRun. Make sure it uses the currently logged-in user's UID to keep their data private
+  Strict architectural rule: absolutely no Riverpod providers, State management, or Flutter UI code in this file. Just raw Firebase cloud logic.
+  
+- [x] **Step 3.7: Wire Equipment to Cloud**
+
+  - 3.7 [x]: Let's upgrade our equipment state. Please refactor lib/providers/equipment_provider.dart. 
+  Right now it uses a hardcoded mock list. I want you to update it to be a Riverpod 3.3.1 AsyncNotifier (or StreamNotifier) that fetches the live equipment list from our new DatabaseService. Update the add, update, and delete methods to push changes to the cloud via the service.
+  
+
 ### Phase 4: Polish & Persistence 
 
-- [ ] **Step 4.1: Local State (Shared Preferences)** 
+- [x] **Step 4.1: Local State (Shared Preferences)** 
 
-  - Implement a feature that saves to the local device (for example: persisting a "Dark Mode" toggle or a user's default/most common snow condition)
+  - 4.1 [x]: Implement a feature that saves to the local device (for example: persisting a "Dark Mode" toggle or a user's default/most common snow condition)
 
 - [ ] **Step 4.2: Error Handling & Loading States** 
 

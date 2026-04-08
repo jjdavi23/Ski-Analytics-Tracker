@@ -1,22 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'screens/main_screen.dart'; //import the new main screen
-import 'widgets/auth_gate.dart';
-import 'firebase_options.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // <--- NEW IMPORT
+import 'firebase_options.dart';
+import 'widgets/auth_gate.dart';
+import 'providers/shared_preferences_provider.dart';
 
-void main() async{
-// 1. Ensure Flutter is ready
-  WidgetsFlutterBinding.ensureInitialized();
+void main() async {
+  print("🎿 DEBUG: Main started..."); 
+  
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print("🎿 DEBUG: Firebase Connected");
 
-  // 2. Initialize Firebase with PLATFORM-SPECIFIC options
-  // This 'options' part is what prevents that JavaScript error on Web!
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+    // --- TURBO CHARGE START ---
+    // This makes your dropdowns load in 1 second instead of 30.
+    // It loads the last known data from local storage while syncing in the background.
+    FirebaseFirestore.instance.settings = const Settings(
+      persistenceEnabled: true, 
+      cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+    );
+    print("🎿 DEBUG: Firestore Persistence Enabled");
+    // --- TURBO CHARGE END ---
 
-  // ProviderScope is the Riverpod that connects all your screens
-  runApp(const ProviderScope(child: MyApp()));
+    final sharedPrefs = await SharedPreferences.getInstance();
+    
+    runApp(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(sharedPrefs),
+        ],
+        child: const MyApp(),
+      ),
+    );
+    
+  } catch (e, stack) {
+    print("❌ FATAL ERROR: $e");
+    print(stack);
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -31,8 +57,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
       ),
-      //Setting mainScreen as the home screen
       home: const AuthGate(), 
     );
   }
-}
+} 

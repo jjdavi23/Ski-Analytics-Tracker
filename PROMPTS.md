@@ -24,3 +24,19 @@
 [x] 25. Make it fit the screen but have slightly larger margins than it had previously on each side
 [x] 26. Read 'REQUIREMENTS.md' and implement step 3.4 and mark it completed in 'REQUIREMENTS.md'
 [x] 27. Read 'REQUIREMENTS.md' and implement step 3.5 and mark it completed in 'REQUIREMENTS.md'
+[x] 28. Read 'REQUIREMENTS.md' and implement step 3.6 and mark it completed in 'REQUIREMENTS.md'
+[x] 29. Read 'REQUIREMENTS.md' and implement step 3.7 and mark it completed in 'REQUIREMENTS.md'
+[x] 30. refactor lib/providers/active_session_provider.dart` to be more robust and persistent, and then 
+    Follow these steps:
+    1. Add the shared_preferences package to my project.
+    2. Refactor active_sessionProvider into two parts:
+     - Create an ActiveSessionIdNotifier (using Riverpod 3.0 Notifier) that stores only a String? (the sessionId).
+     - In the build() method of this notifier, load the saved ID from SharedPreferences.
+     - Add a setSessionId(String? id) method that updates the state AND saves the ID to SharedPreferences using a key like active_session_id.
+    3. Create a second, "derived" provider called activeSessionProvider. This should be a simple Provider that watches both sessionIdProvider and sessionProvider. It should return the TrainingSession object from the live session list that matches the stored ID (or null if not found).
+
+    Finally, search my project for any UI screens (like `RunLoggerScreen` or `AnalyticsScreen`) that call `.setSession()` and update them to use `.setSessionId()` instead. 
+
+    Strict rule: Do not store the whole Session object in memory; only the ID. This keeps it so the active session data is always synced with the live Firestore stream.
+
+[x] 31. When I create another equipment setups and then return to the logger screen after saving runs with a different setup, it gives an error that says there should be exactly 1 equipment profile, can you update the connection between the equipment locker screen and the run logger screen so that It doesnt automatically try to select the new equipment profile?     

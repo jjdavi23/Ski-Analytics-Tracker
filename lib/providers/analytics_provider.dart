@@ -5,6 +5,7 @@ import 'active_session_provider.dart';
 import 'run_provider.dart';
 import 'equipment_provider.dart';
 
+// 1. This class MUST be outside the provider and not start with an underscore
 class EquipmentAnalytics {
   final EquipmentProfile equipment;
   final double averageTime;
@@ -19,52 +20,38 @@ class EquipmentAnalytics {
 
 final analyticsProvider = Provider<List<EquipmentAnalytics>>((ref) {
   final activeSession = ref.watch(activeSessionProvider);
-  final allRuns = ref.watch(runProvider);
-  final allEquipment = ref.watch(equipmentProvider);
+  
+  // Use .value ?? [] to safely unwrap the AsyncValues from Firebase
+  final allRuns = ref.watch(runProvider).value ?? [];
+  final allEquipment = ref.watch(equipmentProvider).value ?? [];
 
-  if (activeSession == null) {
-    return [];
-  }
+  if (activeSession == null) return [];
 
-  // Filter runs for the active session
+  // Logic to find runs for this session
   final sessionRuns = allRuns.where((run) => run.sessionId == activeSession.id).toList();
+  if (sessionRuns.isEmpty) return [];
 
-  if (sessionRuns.isEmpty) {
-    return [];
-  }
-
-  // Group runs by equipment ID
   final Map<String, List<TrainingRun>> groupedRuns = {};
   for (var run in sessionRuns) {
-    if (!groupedRuns.containsKey(run.equipmentProfileId)) {
-      groupedRuns[run.equipmentProfileId] = [];
-    }
-    groupedRuns[run.equipmentProfileId]!.add(run);
+    groupedRuns.putIfAbsent(run.equipmentProfileId, () => []).add(run);
   }
 
-  // Calculate averages
   final List<EquipmentAnalytics> analyticsList = [];
   for (var entry in groupedRuns.entries) {
-    final equipmentId = entry.key;
-    final runs = entry.value;
-
     final equipment = allEquipment.firstWhere(
-      (e) => e.id == equipmentId,
+      (e) => e.id == entry.key,
       orElse: () => EquipmentProfile(id: 'unknown', name: 'Unknown Gear', description: ''),
     );
 
-    final totalTime = runs.fold(0.0, (sum, run) => sum + run.timeInSeconds);
-    final averageTime = totalTime / runs.length;
-
+    final totalTime = entry.value.fold(0.0, (sum, run) => sum + run.timeInSeconds);
+    
     analyticsList.add(EquipmentAnalytics(
       equipment: equipment,
-      averageTime: averageTime,
-      runCount: runs.length,
+      averageTime: totalTime / entry.value.length,
+      runCount: entry.value.length,
     ));
   }
 
-  // Sort by average time (fastest first)
   analyticsList.sort((a, b) => a.averageTime.compareTo(b.averageTime));
-
   return analyticsList;
 });

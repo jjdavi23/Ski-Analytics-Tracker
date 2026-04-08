@@ -1,26 +1,48 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/training_session.dart';
+import 'session_provider.dart';
+import 'shared_preferences_provider.dart';
 
+const String _activeSessionIdKey = 'active_session_id';
 
-//tells the other screens what session is active
-final activeSessionProvider = NotifierProvider<ActiveSessionNotifier, TrainingSession?>(() {
-  return ActiveSessionNotifier();
+// 1. The ID Provider (Stores only the String ID)
+final sessionIdProvider = NotifierProvider<ActiveSessionIdNotifier, String?>(() {
+  return ActiveSessionIdNotifier();
 });
 
-
-//holds data and determines how it can be changed
-//extends Notifier which tells Riverpod to watch it so that
-//it can rebuild UI when something changes
-class ActiveSessionNotifier extends Notifier<TrainingSession?> {
-  
-  //starts as null until the user picks a training session
+class ActiveSessionIdNotifier extends Notifier<String?> {
   @override
-  TrainingSession? build() {
-    return null; 
+  String? build() {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return prefs.getString(_activeSessionIdKey);
   }
 
-  //the UI has to call this method instead of changing the state directly
-  void setSession(TrainingSession session) {
-    state = session;
+  void setSessionId(String? id) {
+    state = id;
+    final prefs = ref.read(sharedPreferencesProvider);
+    if (id == null) {
+      prefs.remove(_activeSessionIdKey);
+    } else {
+      prefs.setString(_activeSessionIdKey, id);
+    }
   }
 }
+
+// 2. The Derived Provider (Returns the actual TrainingSession object)
+final activeSessionProvider = Provider<TrainingSession?>((ref) {
+  final sessionId = ref.watch(sessionIdProvider);
+  final sessionsAsync = ref.watch(sessionProvider);
+
+  return sessionsAsync.when(
+    data: (sessions) {
+      if (sessionId == null) return null;
+      try {
+        return sessions.firstWhere((s) => s.id == sessionId);
+      } catch (_) {
+        return null;
+      }
+    },
+    loading: () => null,
+    error: (_, __) => null,
+  );
+});

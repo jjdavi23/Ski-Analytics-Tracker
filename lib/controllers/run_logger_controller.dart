@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/equipment_profile.dart';
 import '../models/training_run.dart';
 import '../providers/active_session_provider.dart';
 import '../providers/run_provider.dart';
@@ -7,25 +6,29 @@ import '../providers/run_provider.dart';
 // 1. THE STATE
 class RunLoggerState {
   final String timeInput;
-  final EquipmentProfile? selectedEquipment;
+  final String? selectedEquipmentId; // Store only the ID
+  final bool isLoading; 
 
   RunLoggerState({
     this.timeInput = '',
-    this.selectedEquipment,
+    this.selectedEquipmentId,
+    this.isLoading = false,
   });
 
   RunLoggerState copyWith({
     String? timeInput,
-    EquipmentProfile? selectedEquipment,
+    String? selectedEquipmentId,
+    bool? isLoading,
   }) {
     return RunLoggerState(
       timeInput: timeInput ?? this.timeInput,
-      selectedEquipment: selectedEquipment ?? this.selectedEquipment,
+      selectedEquipmentId: selectedEquipmentId ?? this.selectedEquipmentId,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }
 
-// 2. THE PROVIDER (Modern 3.0 AutoDispose Syntax)
+// 2. THE PROVIDER
 final runLoggerControllerProvider = 
     NotifierProvider<RunLoggerController, RunLoggerState>(() {
   return RunLoggerController();
@@ -36,10 +39,11 @@ class RunLoggerController extends Notifier<RunLoggerState> {
   
   @override
   RunLoggerState build() {
-    return RunLoggerState(); // Starts empty
+    return RunLoggerState(); 
   }
 
   void handleKeyPress(String key) {
+    if (state.isLoading) return;
     String currentInput = state.timeInput;
     if (key == '.' && currentInput.contains('.')) return;
     if (currentInput.contains('.') && currentInput.split('.')[1].length >= 2) return;
@@ -47,6 +51,7 @@ class RunLoggerController extends Notifier<RunLoggerState> {
   }
 
   void handleDelete() {
+    if (state.isLoading) return;
     if (state.timeInput.isNotEmpty) {
       state = state.copyWith(
         timeInput: state.timeInput.substring(0, state.timeInput.length - 1),
@@ -58,30 +63,40 @@ class RunLoggerController extends Notifier<RunLoggerState> {
     state = state.copyWith(timeInput: '');
   }
 
-  void setSelectedEquipment(EquipmentProfile? profile) {
-    state = state.copyWith(selectedEquipment: profile);
+  void setSelectedEquipmentId(String? id) {
+    state = state.copyWith(selectedEquipmentId: id);
   }
 
-  // Returns a specific error message if it fails, or null if it succeeds
-  String? saveRun() {
-    // In Riverpod 3.0 Notifiers, 'ref' is built-in automatically!
+  Future<String?> saveRun() async {
     final activeSession = ref.read(activeSessionProvider);
-    
-    if (activeSession == null) return 'Please select or create a session first.';
-    if (state.selectedEquipment == null) return 'Please select your equipment.';
+    if (activeSession == null) return 'Select a session first.';
+    if (state.selectedEquipmentId == null) return 'Select equipment.';
 
     final time = double.tryParse(state.timeInput);
-    if (time == null || time <= 0) return 'Please enter a valid time.';
+    if (time == null || time <= 0) return 'Enter a valid time.';
 
-    final newRun = TrainingRun(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      timeInSeconds: time,
-      sessionId: activeSession.id,
-      equipmentProfileId: state.selectedEquipment!.id,
-    );
+    // 1. Enter Loading State
+    state = state.copyWith(isLoading: true);
 
-    ref.read(runProvider.notifier).addRun(newRun);
-    handleClear(); //clear the numpad on success
-    return null; //null means no errors!
+    try {
+      final newRun = TrainingRun(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        timeInSeconds: time,
+        sessionId: activeSession.id,
+        equipmentProfileId: state.selectedEquipmentId!,
+      );
+
+      // 2. Perform the add. 
+      await ref.read(runProvider.notifier).addRun(newRun);
+      
+      // 3. Reset input on success
+      handleClear();
+      return null; 
+    } catch (e) {
+      return e.toString();
+    } finally {
+      // 4. Force state update back to false
+      state = state.copyWith(isLoading: false);
+    }
   }
 }

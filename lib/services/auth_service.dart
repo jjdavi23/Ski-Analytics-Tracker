@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
-  late final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   
-  // FIX 1: Use the global instance instead of an unnamed constructor
-  late final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  // Use the global instance
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // Auth change user stream
   Stream<User?> get user => _auth.authStateChanges();
@@ -33,17 +33,15 @@ class AuthService {
   // Sign in with Google
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) return null;
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
           
-      // FIX: Firebase only requires the idToken to prove identity. 
-      // We can safely pass null for the accessToken!
       final AuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
-        accessToken: null, 
+        accessToken: googleAuth.accessToken, 
       );
 
       return await _auth.signInWithCredential(credential);

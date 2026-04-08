@@ -7,33 +7,37 @@ class EquipmentLockerScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profiles = ref.watch(equipmentProvider);
+    final profilesAsync = ref.watch(equipmentProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Equipment Locker'),
       ),
-      body: profiles.isEmpty
-          ? const Center(child: Text('No equipment profiles yet. Add one!'))
-          : ListView.builder(
-              itemCount: profiles.length,
-              itemBuilder: (context, index) {
-                final profile = profiles[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: ListTile(
-                    title: Text(profile.name),
-                    subtitle: Text(profile.description),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () {
-                        ref.read(equipmentProvider.notifier).deleteProfile(profile.id);
-                      },
+      body: profilesAsync.when(
+        data: (profiles) => profiles.isEmpty
+            ? const Center(child: Text('No equipment profiles yet. Add one!'))
+            : ListView.builder(
+                itemCount: profiles.length,
+                itemBuilder: (context, index) {
+                  final profile = profiles[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: ListTile(
+                      title: Text(profile.name),
+                      subtitle: Text(profile.description),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          ref.read(equipmentProvider.notifier).deleteProfile(profile.id);
+                        },
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, st) => Center(child: Text('Error: $e')),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddProfileDialog(context, ref),
         tooltip: 'Add Profile',
