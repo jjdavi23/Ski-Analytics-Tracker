@@ -120,7 +120,37 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
   Silent Refresh: Use hasValue logic to ensure that when data updates in the background, the existing UI doesn't "blank out" or revert to a loading state.
   Error Handling: Create a user-friendly error widget that displays a clear message (e.g., "Connection lost on the mountain") and includes a "Retry" button that invalidates the provider to try again.
 
-- [ ] **Step 4.3: Final Theming & Cleanup** 
+- [x] **Step 4.3: Backend Deletion Logic**
+
+  - 4.3 [x]: Add a deleteRun(String runId) method to the DatabaseService.
+
+  - Add a matching deleteRun(String runId) method to the RunNotifier provider to handle state updates.
+
+- [x] **Step 4.4: UI - Swipe to Delete**
+
+  - 4.4 [x]: Wrap the run list items in the AnalyticsScreen with a Dismissible widget.
+
+  - Configure the "background" to show a red trash icon and wire the onDismissed property to the deleteRun method created in 4.3.
+
+- [ ] **Step 4.5: Analytics - Chart Infrastructure**
+
+  - Add the fl_chart dependency to pubspec.yaml.
+
+  - Create a simple, standalone RunChartWidget in lib/widgets/ that accepts a list of TrainingRun objects and displays a basic line graph of Time vs Run Number.
+
+- [ ] **Step 4.6: Analytics - Visual Data Integration**
+
+Integrate the RunChartWidget into the top of the AnalyticsScreen.
+
+Ensure it correctly filters data based on the activeSessionId so it only shows the graph for the currently selected session.
+
+- [ ] **Step 4.7: Advanced Filtering - Wax/Ski Comparison**
+
+Update the AnalyticsScreen to include a toggle or Chip-based filter that allows the racer to switch the chart view between "All Runs" and "Compare by Equipment."
+
+
+
+- [ ] **Step 4.: Final Theming & Cleanup** 
 
   - Apply consistent padding, colors, and typography.
 

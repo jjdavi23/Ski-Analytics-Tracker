@@ -41,4 +41,13 @@
 
 [x] 31. When I create another equipment setups and then return to the logger screen after saving runs with a different setup, it gives an error that says there should be exactly 1 equipment profile, can you update the connection between the equipment locker screen and the run logger screen so that It doesnt automatically try to select the new equipment profile?     
 [x] 32. Read 'REQUIREMENTS.md' and implement step 4.2 and mark it completed in 'REQUIREMENTS.md'
+[x] 33. Read 'REQUIREMENTS.md' and implement step 4.3 and mark it completed in 'REQUIREMENTS.md'
+[x] 34. Read 'REQUIREMENTS.md' and implement step 4.4 and mark it completed in 'REQUIREMENTS.md'
+[x] 35. in the analytics screen instead under run history instead of swiping to delete add a button to delete and a button to edit the time, and make it so when you edit the time or delete it updates the calculated average shown for the selected setup
+[] 36. Create a new file lib/widgets/analytics/session_selector.dart and move the sessionsAsync.when dropdown logic from AnalyticsScreen into a new ConsumerWidget called SessionSelector.
 
+    - It should watch sessionProvider, activeSessionProvider, and use sessionIdProvider.notifier to update the selection.
+
+    -Use the SyncErrorWidget for error states and skipLoadingOnRefresh: true to keep the UI snappy.
+
+    

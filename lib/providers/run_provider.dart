@@ -23,10 +23,17 @@ class RunNotifier extends StreamNotifier<List<TrainingRun>> {
     }
   }
 
+  Future<void> updateRun(TrainingRun run) async {
+    final dbService = ref.read(databaseServiceProvider);
+    if (dbService != null) {
+      await dbService.updateRun(run);
+    }
+  }
+
   Future<void> deleteRun(String id) async {
     final dbService = ref.read(databaseServiceProvider);
     if (dbService != null) {
-      await dbService.deleteTrainingRun(id);
+      await dbService.deleteRun(id);
     }
   }
 }

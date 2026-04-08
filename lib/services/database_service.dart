@@ -98,11 +98,11 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateTrainingRun(TrainingRun run) async {
-    await _runCollection.doc(run.id).update(run.toMap());
+  Future<void> updateRun(TrainingRun run) async {
+    await _safeWrite(_runCollection.doc(run.id), run.toMap());
   }
 
-  Future<void> deleteTrainingRun(String id) async {
+  Future<void> deleteRun(String id) async {
     await _runCollection.doc(id).delete();
   }
 }
