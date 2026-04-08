@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/training_run.dart';
 import '../providers/session_provider.dart';
 import '../providers/active_session_provider.dart';
-import '../providers/analytics_provider.dart';
 import '../providers/run_provider.dart';
 import '../providers/equipment_provider.dart';
 import '../widgets/sync_error_widget.dart';
 import '../models/equipment_profile.dart';
 import '../widgets/analytics/session_selector.dart';
+import '../widgets/analytics/ranked_equipment_list.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
@@ -16,7 +16,6 @@ class AnalyticsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeSession = ref.watch(activeSessionProvider);
-    final analytics = ref.watch(analyticsProvider);
     final runsAsync = ref.watch(runProvider);
     final equipmentAsync = ref.watch(equipmentProvider);
 
@@ -32,27 +31,7 @@ class AnalyticsScreen extends ConsumerWidget {
                 ? const Center(child: Text('Select a session to view analytics'))
                 : CustomScrollView(
                     slivers: [
-                      if (analytics.isNotEmpty) ...[
-                        const SliverToBoxAdapter(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Text(
-                              'Ranked Setups (Fastest First)',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final item = analytics[index];
-                              final isFastest = index == 0;
-                              return _AnalyticsCard(item: item, index: index, isFastest: isFastest);
-                            },
-                            childCount: analytics.length,
-                          ),
-                        ),
-                      ],
+                      const RankedEquipmentList(),
                       
                       const SliverToBoxAdapter(
                         child: Padding(
@@ -170,53 +149,6 @@ class AnalyticsScreen extends ConsumerWidget {
             child: const Text('Save'),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _AnalyticsCard extends StatelessWidget {
-  final EquipmentAnalytics item;
-  final int index;
-  final bool isFastest;
-
-  const _AnalyticsCard({
-    required this.item,
-    required this.index,
-    required this.isFastest,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: isFastest ? Colors.green.withValues(alpha: 0.1) : null,
-      elevation: isFastest ? 4 : 1,
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: isFastest ? Colors.green : Colors.blueGrey,
-          child: Text('#${index + 1}', style: const TextStyle(color: Colors.white)),
-        ),
-        title: Text(
-          item.equipment.name,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text('${item.runCount} total runs'),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              '${item.averageTime.toStringAsFixed(2)}s',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isFastest ? Colors.green : Colors.blue,
-              ),
-            ),
-            const Text('avg time', style: TextStyle(fontSize: 10)),
-          ],
-        ),
       ),
     );
   }
