@@ -138,7 +138,7 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 
   - Create a simple, standalone RunChartWidget in lib/widgets/ that accepts a list of TrainingRun objects and displays a basic line graph of Time vs Run Number.
 
-- [ ] **Step 4.6: Analytics - Visual Data Integration**
+- [x] **Step 4.6: Analytics - Visual Data Integration**
 
 Integrate the RunChartWidget into the top of the AnalyticsScreen.
 
