@@ -136,7 +136,7 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 
   - 4.5 [x]: Add the fl_chart dependency to pubspec.yaml.
 
-  - Create a simple, standalone RunChartWidget in lib/widgets/ that accepts a list of TrainingRun objects and displays a basic line graph of Time vs Run Number.
+  - Create a simple, standalone RunChartWidget in lib/widgets/ that accepts a list of TraaddsiningRun objects and displays a basic line graph of Time vs Run Number.
 
 - [x] **Step 4.6: Analytics - Visual Data Integration**
 
@@ -144,7 +144,7 @@ Integrate the RunChartWidget into the top of the AnalyticsScreen.
 
 Ensure it correctly filters data based on the activeSessionId so it only shows the graph for the currently selected session.
 
-- [ ] **Step 4.7: Advanced Filtering - Wax/Ski Comparison**
+- [x] **Step 4.7: Advanced Filtering - Wax/Ski Comparison**
 
 Update the AnalyticsScreen to include a toggle or Chip-based filter that allows the racer to switch the chart view between "All Runs" and "Compare by Equipment."
 

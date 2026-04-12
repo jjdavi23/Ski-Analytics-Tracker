@@ -65,3 +65,5 @@
 [x] 43. Create a new file lib/widgets/run_logger/save_run_button.dart. Move the "Save Run" ElevatedButton and all its onPressed logic from RunLoggerScreen into a new ConsumerWidget called SaveRunButton that should watch activeSessionProvider and runLoggerControllerProvider, make sure it preserves the errorMessage handling, the ScaffoldMessenger SnackBars, and the button's "disabled" state (which triggers if activeSession is null or isLoading is true). Keep the blueGrey background, white foreground, and the CircularProgressIndicator that appears when isLoading is true. Replace the inline button code in RunLoggerScreen with this new widget.
 [x] 44. Read 'REQUIREMENTS.md' and implement step 4.5 and mark it completed in 'REQUIREMENTS.md'
 [x] 45. Read 'REQUIREMENTS.md' and implement step 4.6 and mark it completed in 'REQUIREMENTS.md'
+[x] 46. Read 'REQUIREMENTS.md; and implement step 4.7 and mark is completed in 'REQUIREMENTS.md'
+[ ] 47. Read '
