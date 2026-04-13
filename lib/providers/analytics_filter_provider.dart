@@ -5,4 +5,18 @@ enum ChartFilter {
   compareByEquipment,
 }
 
-final chartFilterProvider = StateProvider<ChartFilter>((ref) => ChartFilter.allRuns);
+// Using a modern Notifier instead of StateProvider
+final chartFilterProvider = NotifierProvider<ChartFilterNotifier, ChartFilter>(() {
+  return ChartFilterNotifier();
+});
+
+class ChartFilterNotifier extends Notifier<ChartFilter> {
+  @override
+  ChartFilter build() {
+    return ChartFilter.allRuns; // Initial state
+  }
+
+  void setFilter(ChartFilter filter) {
+    state = filter;
+  }
+}

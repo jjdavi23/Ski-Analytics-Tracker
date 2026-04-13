@@ -140,18 +140,30 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 
 - [x] **Step 4.6: Analytics - Visual Data Integration**
 
-Integrate the RunChartWidget into the top of the AnalyticsScreen.
+  - Integrate the RunChartWidget into the top of the AnalyticsScreen.
 
-Ensure it correctly filters data based on the activeSessionId so it only shows the graph for the currently selected session.
+  - Ensure it correctly filters data based on the activeSessionId so it only shows the graph for the currently selected session.
 
 - [x] **Step 4.7: Advanced Filtering - Wax/Ski Comparison**
 
-Update the AnalyticsScreen to include a toggle or Chip-based filter that allows the racer to switch the chart view between "All Runs" and "Compare by Equipment."
+  - Update the AnalyticsScreen to include a toggle or Chip-based filter that allows the racer to switch the chart view    between "All Runs" and "Compare by Equipment."
 
+### Phase 5: Equipment Locker Management
 
+- [x] **Step 5.1: Create EquipmentLockerScreen UI**
 
-- [ ] **Step 4.: Final Theming & Cleanup** 
+  - Implement a SliverList or GridView to display all EquipmentProfile objects.
 
-  - Apply consistent padding, colors, and typography.
+  - Add a "Floating Action Button" (FAB) to trigger a "New Equipment" modal.
 
-  - Refactor any files that get too big (> 200 lines) by extracting custom widgets.
+- [x] **Step 5.2: CRUD Operations for Gear**
+
+  - Implement "Edit" functionality to rename or update descriptions of existing skis.
+
+  - Implement "Delete" functionality with a confirmation dialog (Warning: deleting gear may affect historical run data).
+
+- [ ] **Step 5.3: Equipment Usage Statistics**
+
+  - On each equipment card, display a "Total Runs" counter derived from the runProvider.
+
+  - Add a "Last Used" date based on the timestamp of the most recent run associated with that ID.

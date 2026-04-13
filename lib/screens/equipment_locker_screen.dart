@@ -34,11 +34,20 @@ class EquipmentLockerScreen extends ConsumerWidget {
                           child: ListTile(
                             title: Text(profile.name),
                             subtitle: Text(profile.description),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
-                                ref.read(equipmentProvider.notifier).deleteProfile(profile.id);
-                              },
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit, color: Colors.blue),
+                                  onPressed: () => _showEditProfileDialog(context, ref, profile),
+                                  tooltip: 'Edit Profile',
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () => _showDeleteConfirmationDialog(context, ref, profile),
+                                  tooltip: 'Delete Profile',
+                                ),
+                              ],
                             ),
                           ),
                         );
@@ -76,10 +85,12 @@ class EquipmentLockerScreen extends ConsumerWidget {
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(labelText: 'Profile Name (e.g., Fischer SL)'),
+                textCapitalization: TextCapitalization.words,
               ),
               TextField(
                 controller: descriptionController,
                 decoration: const InputDecoration(labelText: 'Description (e.g., Swix Blue)'),
+                textCapitalization: TextCapitalization.sentences,
               ),
             ],
           ),
@@ -99,6 +110,89 @@ class EquipmentLockerScreen extends ConsumerWidget {
                 }
               },
               child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showEditProfileDialog(BuildContext context, WidgetRef ref, EquipmentProfile profile) {
+    final nameController = TextEditingController(text: profile.name);
+    final descriptionController = TextEditingController(text: profile.description);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit Equipment Profile'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Profile Name'),
+                textCapitalization: TextCapitalization.words,
+              ),
+              TextField(
+                controller: descriptionController,
+                decoration: const InputDecoration(labelText: 'Description'),
+                textCapitalization: TextCapitalization.sentences,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (nameController.text.isNotEmpty) {
+                  ref.read(equipmentProvider.notifier).updateProfile(
+                        profile.copyWith(
+                          name: nameController.text,
+                          description: descriptionController.text,
+                        ),
+                      );
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Profile updated')),
+                  );
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context, WidgetRef ref, EquipmentProfile profile) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Equipment?'),
+          content: Text(
+            'Are you sure you want to delete "${profile.name}"? This will affect historical run data for this gear.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+              onPressed: () {
+                ref.read(equipmentProvider.notifier).deleteProfile(profile.id);
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Profile deleted')),
+                );
+              },
+              child: const Text('Delete'),
             ),
           ],
         );
