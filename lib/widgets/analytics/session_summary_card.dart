@@ -9,18 +9,19 @@ class SessionSummaryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final sessionId = ref.watch(sessionIdProvider);
     final activeSession = ref.watch(activeSessionProvider);
     final runsAsync = ref.watch(runProvider);
 
-    if (activeSession == null) {
+    if (sessionId == null) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
 
     return runsAsync.when(
       data: (allRuns) {
-        final sessionRuns = allRuns
-            .where((run) => run.sessionId == activeSession.id)
-            .toList();
+        final sessionRuns = sessionId == 'all_time'
+            ? allRuns
+            : allRuns.where((run) => run.sessionId == sessionId).toList();
 
         if (sessionRuns.isEmpty) {
           return const SliverToBoxAdapter(child: SizedBox.shrink());
@@ -51,9 +52,9 @@ class SessionSummaryCard extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Session Overview',
-                    style: TextStyle(
+                  Text(
+                    sessionId == 'all_time' ? 'All Time Overview' : 'Session Overview',
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),

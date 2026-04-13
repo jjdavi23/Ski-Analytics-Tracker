@@ -17,6 +17,7 @@ class AnalyticsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeSession = ref.watch(activeSessionProvider);
+    final sessionId = ref.watch(sessionIdProvider);
     final runsAsync = ref.watch(runProvider);
     final equipmentAsync = ref.watch(equipmentProvider);
     final chartFilter = ref.watch(chartFilterProvider);
@@ -25,30 +26,38 @@ class AnalyticsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Analytics Dashboard'),
         actions: [
-          if (activeSession != null)
+          if (sessionId != null)
             IconButton(
               icon: const Icon(Icons.share),
               onPressed: () {
                 final allRuns = runsAsync.value ?? [];
-                final sessionRuns = allRuns
-                    .where((run) => run.sessionId == activeSession.id)
-                    .toList();
+                final sessionRuns = sessionId == 'all_time'
+                    ? allRuns
+                    : allRuns.where((run) => run.sessionId == sessionId).toList();
                 final equipmentList = equipmentAsync.value ?? [];
 
                 if (sessionRuns.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('No runs in this session to export')),
+                    const SnackBar(content: Text('No runs to export')),
                   );
                   return;
                 }
 
-                ExportService.shareSessionCsv(
-                  session: activeSession,
-                  runs: sessionRuns,
-                  equipment: equipmentList,
-                );
+                if (sessionId == 'all_time') {
+                   ExportService.shareSessionCsv(
+                      session: TrainingSession(id: 'all_time', date: DateTime.now(), location: 'All Time', snowCondition: 'Various'),
+                      runs: sessionRuns,
+                      equipment: equipmentList,
+                    );
+                } else if (activeSession != null) {
+                  ExportService.shareSessionCsv(
+                    session: activeSession,
+                    runs: sessionRuns,
+                    equipment: equipmentList,
+                  );
+                }
               },
-              tooltip: 'Export Session CSV',
+              tooltip: 'Export CSV',
             ),
         ],
       ),
@@ -57,7 +66,7 @@ class AnalyticsScreen extends ConsumerWidget {
           const SessionSelector(),
           const Divider(),
           
-          if (activeSession != null)
+          if (sessionId != null)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: SegmentedButton<ChartFilter>(
@@ -81,17 +90,17 @@ class AnalyticsScreen extends ConsumerWidget {
             ),
 
           Expanded(
-            child: activeSession == null
+            child: sessionId == null
                 ? const Center(child: Text('Select a session to view analytics'))
                 : CustomScrollView(
                     slivers: [
                       const SessionSummaryCard(),
                       runsAsync.maybeWhen(
                         data: (allRuns) {
-                          final sessionRuns = allRuns
-                              .where((run) => run.sessionId == activeSession.id)
-                              .toList()
-                            ..sort((a, b) => a.id.compareTo(b.id)); // Ascending for trend
+                          final sessionRuns = sessionId == 'all_time'
+                              ? allRuns
+                              : allRuns.where((run) => run.sessionId == sessionId).toList()
+                            ..sort((a, b) => a.timestamp.compareTo(b.timestamp)); // Ascending for trend
                           
                           return equipmentAsync.maybeWhen(
                             data: (equipmentList) => RunChartWidget(

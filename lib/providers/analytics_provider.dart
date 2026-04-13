@@ -19,20 +19,24 @@ class EquipmentAnalytics {
 }
 
 final analyticsProvider = Provider<List<EquipmentAnalytics>>((ref) {
+  final sessionId = ref.watch(sessionIdProvider);
   final activeSession = ref.watch(activeSessionProvider);
   
   // Use .value ?? [] to safely unwrap the AsyncValues from Firebase
   final allRuns = ref.watch(runProvider).value ?? [];
   final allEquipment = ref.watch(equipmentProvider).value ?? [];
 
-  if (activeSession == null) return [];
+  if (sessionId == null) return [];
 
-  // Logic to find runs for this session
-  final sessionRuns = allRuns.where((run) => run.sessionId == activeSession.id).toList();
-  if (sessionRuns.isEmpty) return [];
+  // Filter runs: either for a specific session or all runs if 'all_time'
+  final List<TrainingRun> filteredRuns = sessionId == 'all_time' 
+      ? allRuns 
+      : allRuns.where((run) => run.sessionId == activeSession?.id).toList();
+
+  if (filteredRuns.isEmpty) return [];
 
   final Map<String, List<TrainingRun>> groupedRuns = {};
-  for (var run in sessionRuns) {
+  for (var run in filteredRuns) {
     groupedRuns.putIfAbsent(run.equipmentProfileId, () => []).add(run);
   }
 

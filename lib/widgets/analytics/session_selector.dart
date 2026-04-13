@@ -10,6 +10,7 @@ class SessionSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sessionsAsync = ref.watch(sessionProvider);
+    final sessionId = ref.watch(sessionIdProvider);
     final activeSession = ref.watch(activeSessionProvider);
 
     return Column(
@@ -18,30 +19,41 @@ class SessionSelector extends ConsumerWidget {
           const LinearProgressIndicator(),
         sessionsAsync.when(
           skipLoadingOnRefresh: true,
-          data: (sessions) => Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: DropdownButtonFormField<String>(
-              value: sessions.any((s) => s.id == activeSession?.id)
-                  ? activeSession?.id
-                  : null,
-              decoration: const InputDecoration(
-                labelText: 'Select Training Session',
-                border: OutlineInputBorder(),
+          data: (sessions) {
+            // Determine the value to show in the dropdown
+            final dropdownValue = sessionId == 'all_time' 
+                ? 'all_time'
+                : (sessions.any((s) => s.id == activeSession?.id) ? activeSession?.id : null);
+
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: DropdownButtonFormField<String>(
+                value: dropdownValue,
+                decoration: const InputDecoration(
+                  labelText: 'Select Training Session',
+                  border: OutlineInputBorder(),
+                ),
+                items: [
+                  const DropdownMenuItem(
+                    value: 'all_time',
+                    child: Text('All Time'),
+                  ),
+                  ...sessions.map((session) {
+                    return DropdownMenuItem(
+                      value: session.id,
+                      child: Text(
+                          '${session.location} (${session.date.month}/${session.date.day})'),
+                    );
+                  }).toList(),
+                ],
+                onChanged: (id) {
+                  if (id != null) {
+                    ref.read(sessionIdProvider.notifier).setSessionId(id);
+                  }
+                },
               ),
-              items: sessions.map((session) {
-                return DropdownMenuItem(
-                  value: session.id,
-                  child: Text(
-                      '${session.location} (${session.date.month}/${session.date.day})'),
-                );
-              }).toList(),
-              onChanged: (sessionId) {
-                if (sessionId != null) {
-                  ref.read(sessionIdProvider.notifier).setSessionId(sessionId);
-                }
-              },
-            ),
-          ),
+            );
+          },
           loading: () => const SizedBox.shrink(),
           error: (err, stack) => SyncErrorWidget(
             message: 'Failed to load sessions',

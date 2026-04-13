@@ -11,33 +11,34 @@ class RunHistoryList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final sessionId = ref.watch(sessionIdProvider);
     final activeSession = ref.watch(activeSessionProvider);
     final runsAsync = ref.watch(runProvider);
     final equipmentAsync = ref.watch(equipmentProvider);
 
-    if (activeSession == null) {
+    if (sessionId == null) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
 
     return SliverMainAxisGroup(
       slivers: [
-        const SliverToBoxAdapter(
+        SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Session History',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              sessionId == 'all_time' ? 'All Time History' : 'Session History',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
         ),
         runsAsync.when(
           data: (allRuns) {
-            final sessionRuns = allRuns
-                .where((run) => run.sessionId == activeSession.id)
-                .toList()
-              ..sort((a, b) => b.id.compareTo(a.id));
+            final filteredRuns = sessionId == 'all_time'
+                ? allRuns
+                : allRuns.where((run) => run.sessionId == sessionId).toList()
+              ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
-            if (sessionRuns.isEmpty) {
+            if (filteredRuns.isEmpty) {
               return const SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 32),
@@ -53,7 +54,7 @@ class RunHistoryList extends ConsumerWidget {
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      final run = sessionRuns[index];
+                      final run = filteredRuns[index];
                       final equipment = equipmentList.firstWhere(
                         (e) => e.id == run.equipmentProfileId,
                         orElse: () => EquipmentProfile(
@@ -85,7 +86,7 @@ class RunHistoryList extends ConsumerWidget {
                         ),
                       );
                     },
-                    childCount: sessionRuns.length,
+                    childCount: filteredRuns.length,
                   ),
                 );
               },
