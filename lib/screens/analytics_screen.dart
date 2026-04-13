@@ -9,6 +9,7 @@ import '../widgets/analytics/ranked_equipment_list.dart';
 import '../widgets/analytics/run_history_list.dart';
 import '../widgets/analytics/session_summary_card.dart';
 import '../widgets/run_chart_widget.dart';
+import '../services/export_service.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
@@ -21,7 +22,36 @@ class AnalyticsScreen extends ConsumerWidget {
     final chartFilter = ref.watch(chartFilterProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Analytics Dashboard')),
+      appBar: AppBar(
+        title: const Text('Analytics Dashboard'),
+        actions: [
+          if (activeSession != null)
+            IconButton(
+              icon: const Icon(Icons.share),
+              onPressed: () {
+                final allRuns = runsAsync.value ?? [];
+                final sessionRuns = allRuns
+                    .where((run) => run.sessionId == activeSession.id)
+                    .toList();
+                final equipmentList = equipmentAsync.value ?? [];
+
+                if (sessionRuns.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('No runs in this session to export')),
+                  );
+                  return;
+                }
+
+                ExportService.shareSessionCsv(
+                  session: activeSession,
+                  runs: sessionRuns,
+                  equipment: equipmentList,
+                );
+              },
+              tooltip: 'Export Session CSV',
+            ),
+        ],
+      ),
       body: Column(
         children: [
           const SessionSelector(),
