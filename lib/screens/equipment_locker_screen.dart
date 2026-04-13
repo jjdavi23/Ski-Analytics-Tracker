@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import '../models/equipment_profile.dart';
+import '../models/training_run.dart';
 import '../providers/equipment_provider.dart';
+import '../providers/run_provider.dart';
 import '../widgets/sync_error_widget.dart';
 
 class EquipmentLockerScreen extends ConsumerWidget {
@@ -9,14 +13,15 @@ class EquipmentLockerScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profilesAsync = ref.watch(equipmentProvider);
+    final runsAsync = ref.watch(runProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Equipment Locker'),
+        centerTitle: true,
       ),
       body: Column(
         children: [
-          // Non-blocking loading indicator at the top
           if (profilesAsync.isLoading && !profilesAsync.hasValue)
             const LinearProgressIndicator(),
             
@@ -25,38 +30,93 @@ class EquipmentLockerScreen extends ConsumerWidget {
               skipLoadingOnRefresh: true,
               data: (profiles) => profiles.isEmpty
                   ? const Center(child: Text('No equipment profiles yet. Add one!'))
-                  : ListView.builder(
-                      itemCount: profiles.length,
-                      itemBuilder: (context, index) {
-                        final profile = profiles[index];
-                        return Card(
-                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: ListTile(
-                            title: Text(profile.name),
-                            subtitle: Text(profile.description),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit, color: Colors.blue),
-                                  onPressed: () => _showEditProfileDialog(context, ref, profile),
-                                  tooltip: 'Edit Profile',
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => _showDeleteConfirmationDialog(context, ref, profile),
-                                  tooltip: 'Delete Profile',
-                                ),
-                              ],
+                  : runsAsync.when(
+                      data: (allRuns) => ListView.builder(
+                        itemCount: profiles.length,
+                        itemBuilder: (context, index) {
+                          final profile = profiles[index];
+                          
+                          // Calculate Stats
+                          final usageRuns = allRuns.where((r) => r.equipmentProfileId == profile.id).toList();
+                          final totalRuns = usageRuns.length;
+                          
+                          DateTime? lastUsed;
+                          if (usageRuns.isNotEmpty) {
+                            usageRuns.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+                            lastUsed = usageRuns.first.timestamp;
+                          }
+
+                          return Card(
+                            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    title: Text(
+                                      profile.name,
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Text(profile.description),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.edit, color: Colors.blue),
+                                          onPressed: () => _showEditProfileDialog(context, ref, profile),
+                                          tooltip: 'Edit Profile',
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete, color: Colors.red),
+                                          onPressed: () => _showDeleteConfirmationDialog(context, ref, profile),
+                                          tooltip: 'Delete Profile',
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const Divider(height: 8),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Total Runs: $totalRuns',
+                                          style: TextStyle(
+                                            fontSize: 12, 
+                                            color: Colors.grey[700],
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        Text(
+                                          lastUsed != null 
+                                            ? 'Last Used: ${DateFormat('MMM d, yyyy').format(lastUsed)}' 
+                                            : 'Never used',
+                                          style: TextStyle(
+                                            fontSize: 12, 
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
+                      loading: () => const Center(child: CircularProgressIndicator()),
+                      error: (e, st) => const Center(child: Text('Error loading usage stats')),
                     ),
-              loading: () => const Center(child: Text('Connecting to Locker...')),
-              error: (e, st) => SyncErrorWidget(
-                message: 'Failed to access Locker',
-                onRetry: () => ref.invalidate(equipmentProvider),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, st) => Center(
+                child: SyncErrorWidget(
+                  message: 'Failed to access Locker',
+                  onRetry: () => ref.invalidate(equipmentProvider),
+                ),
               ),
             ),
           ),
@@ -69,6 +129,8 @@ class EquipmentLockerScreen extends ConsumerWidget {
       ),
     );
   }
+
+  // --- Dialogs ---
 
   void _showAddProfileDialog(BuildContext context, WidgetRef ref) {
     final nameController = TextEditingController();
@@ -156,9 +218,13 @@ class EquipmentLockerScreen extends ConsumerWidget {
                         ),
                       );
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Profile updated')),
-                  );
+                  
+                  // Best Practice: Check if mounted before showing SnackBar
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Profile updated')),
+                    );
+                  }
                 }
               },
               child: const Text('Save'),
@@ -184,13 +250,19 @@ class EquipmentLockerScreen extends ConsumerWidget {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, 
+                foregroundColor: Colors.white
+              ),
               onPressed: () {
                 ref.read(equipmentProvider.notifier).deleteProfile(profile.id);
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Profile deleted')),
-                );
+                
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Profile deleted')),
+                  );
+                }
               },
               child: const Text('Delete'),
             ),

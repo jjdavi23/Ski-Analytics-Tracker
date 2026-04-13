@@ -84,6 +84,7 @@ class RunLoggerController extends Notifier<RunLoggerState> {
         timeInSeconds: time,
         sessionId: activeSession.id,
         equipmentProfileId: state.selectedEquipmentId!,
+        timestamp: DateTime.now(),
       );
 
       // 2. Perform the add. 

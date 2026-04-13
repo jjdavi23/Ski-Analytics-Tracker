@@ -162,7 +162,7 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 
   - Implement "Delete" functionality with a confirmation dialog (Warning: deleting gear may affect historical run data).
 
-- [ ] **Step 5.3: Equipment Usage Statistics**
+- [x] **Step 5.3: Equipment Usage Statistics**
 
   - On each equipment card, display a "Total Runs" counter derived from the runProvider.
 
