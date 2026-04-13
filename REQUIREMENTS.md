@@ -167,3 +167,25 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
   - On each equipment card, display a "Total Runs" counter derived from the runProvider.
 
   - Add a "Last Used" date based on the timestamp of the most recent run associated with that ID.
+
+  ### Phase 6: Equipment Locker Management
+
+- [ ] **Step 6.1: Session Summary Dashboard**
+
+  -At the top of the AnalyticsScreen, add a "Session Overview" card.
+
+  -Calculate and display: Best Run of Session, Session Average, and Consistency Score (Standard Deviation of times).
+
+- [ ] **Step 6.2: CSV Export Functionality**
+
+  -Add a path_provider and csv package dependency.
+
+  -Implement a function to convert the current session's runs into a CSV format.
+
+  -Add a "Share" button to export the CSV to email or messaging apps for coaching review.
+
+- [ ] **Step 6.3: Multi-Session Filtering**  
+
+  -Update the SessionSelector to allow viewing "All Time" data.
+
+  -Modify the RankedEquipmentList to show which gear performs best across the entire season, not just the active session.

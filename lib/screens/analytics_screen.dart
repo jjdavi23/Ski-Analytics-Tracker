@@ -7,6 +7,7 @@ import '../providers/analytics_filter_provider.dart';
 import '../widgets/analytics/session_selector.dart';
 import '../widgets/analytics/ranked_equipment_list.dart';
 import '../widgets/analytics/run_history_list.dart';
+import '../widgets/analytics/session_summary_card.dart';
 import '../widgets/run_chart_widget.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
@@ -54,6 +55,7 @@ class AnalyticsScreen extends ConsumerWidget {
                 ? const Center(child: Text('Select a session to view analytics'))
                 : CustomScrollView(
                     slivers: [
+                      const SessionSummaryCard(),
                       runsAsync.maybeWhen(
                         data: (allRuns) {
                           final sessionRuns = allRuns
