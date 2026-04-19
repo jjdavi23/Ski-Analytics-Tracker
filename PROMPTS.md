@@ -72,3 +72,4 @@
 [x] 50. Read 'REQUIREMENTS.md' and implement step 6.1 and mark it completed in 'REQUIREMENTS.md'
 [x] 51. Read 'REQUIREMENTS.md' and implement step 6.2 and mark it completed in 'REQUIREMENTS.md'
 [x] 52. Read 'REQUIREMENTS.md' and implement step 6.3 and mark it completed in 'REQUIREMENTS.md'
+[x] 53. Read 'REQUIREMENTS.md' and implement step 7.1 and mark it completed in 'REQUIREMENTS.md'

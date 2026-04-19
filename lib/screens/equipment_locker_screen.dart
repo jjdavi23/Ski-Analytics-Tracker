@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../models/equipment_profile.dart';
-import '../models/training_run.dart';
 import '../providers/equipment_provider.dart';
 import '../providers/run_provider.dart';
 import '../widgets/sync_error_widget.dart';

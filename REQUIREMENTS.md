@@ -189,3 +189,79 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
   -Update the SessionSelector to allow viewing "All Time" data.
 
   -Modify the RankedEquipmentList to show which gear performs best across the entire season, not just the active session.
+
+  ### Phase 7: Authentication & Secure Data Sync
+
+Goal: Move from local-only data to a secure, cloud-synced profile using Google Authentication.
+
+- [x] **Step 7.1: Implement AuthService Layer**
+
+ - Create lib/services/auth_service.dart.
+
+ - Integrate firebase_auth and google_sign_in.
+
+ - Implement signInWithGoogle() to handle the native intent, credential exchange, and Firebase login.
+
+ - Include a signOut() method and a getter for the current User?.
+
+- [ ] **Step 7.2: Create AuthProvider (Riverpod 3.0 Notifier)**
+
+ - Create lib/providers/auth_provider.dart.
+
+ - Implement an AuthNotifier that manages an AsyncValue<User?>.
+
+ - The build() method should listen to authStateChanges() from Firebase.
+
+ - Add methods to the Notifier that proxy to the AuthService for signing in and out.
+
+- [ ] **Step 7.3: Update LoginScreen UI**
+
+ - Create or update lib/screens/login_screen.dart.
+
+ - Add a "Sign in with Google" button with high-contrast styling (suitable for outdoor/alpine visibility).
+
+ - Implement a loading overlay or CircularProgressIndicator that triggers when the authProvider state is loading.
+
+ - Ensure the screen handles the error state of the AsyncValue by showing a SnackBar.
+
+- [ ] **Step 7.4: Implement Auth Wrapper (Global Routing)**
+
+ - Update main.dart or create an AuthWrapper widget.
+
+ - Use ref.watch(authProvider) to reactively switch the app's home widget.
+
+ - If data is null, show LoginScreen. If data contains a User, show the MainNavigationWrapper (the Analytics/Logger dashboard).
+  
+  ### Phase 8: Advanced Logic & Performance
+
+- Refining the "Bridge" aspect of the app—where data meets racing strategy.
+
+- [ ] **Step 8.1: Weather & Snow Metadata Integration**
+
+  - Add optional fields to TrainingSession for temperature and wax used.
+
+  - Update the SessionSelector to show snow conditions (e.g., "Icy," "Soft," "Man-made") as a secondary label.
+
+- [ ] **Step 8.2: Persistent Storage Audit**
+
+  -Verify that shared_preferences correctly restores the activeSessionId after a hard app reset.
+
+  -Ensure all async operations in the RunLoggerController handle potential Firestore/Local write failures gracefully.
+
+  
+
+### Phase 9: UI/UX Polish & Deployment
+
+- [ ] **Step 9.1: Dark Mode & Thematic Styling**
+
+ - Ensure high-contrast visibility for the RunTimeDisplay to be readable in bright sunlight on the snow.
+
+ - Refine the RunChartWidget with proper axis limits so the line doesn't "flatline" at the bottom of the graph.
+
+[ ] **Step 9.2: App Icon & Splash Screen**
+
+ - Generate a custom logo (The "Bridge" metaphor).
+
+[ ] **Step 9.3: Performance Testing**
+
+ - Stress-test the RunLoggerScreen with rapid-fire inputs to ensure the active_session_provider remains synced.

@@ -4,6 +4,7 @@ import '../providers/active_session_provider.dart';
 import '../providers/run_provider.dart';
 import '../providers/equipment_provider.dart';
 import '../providers/analytics_filter_provider.dart';
+// FIX 1: Add the missing model import
 import '../widgets/analytics/session_selector.dart';
 import '../widgets/analytics/ranked_equipment_list.dart';
 import '../widgets/analytics/run_history_list.dart';
@@ -43,19 +44,12 @@ class AnalyticsScreen extends ConsumerWidget {
                   return;
                 }
 
-                if (sessionId == 'all_time') {
-                   ExportService.shareSessionCsv(
-                      session: TrainingSession(id: 'all_time', date: DateTime.now(), location: 'All Time', snowCondition: 'Various'),
-                      runs: sessionRuns,
-                      equipment: equipmentList,
-                    );
-                } else if (activeSession != null) {
-                  ExportService.shareSessionCsv(
-                    session: activeSession,
-                    runs: sessionRuns,
-                    equipment: equipmentList,
-                  );
-                }
+                // FIX 2: Use the updated shareCsv method and simplify logic
+                ExportService.shareCsv(
+                  session: sessionId == 'all_time' ? null : activeSession,
+                  runs: sessionRuns,
+                  equipment: equipmentList,
+                );
               },
               tooltip: 'Export CSV',
             ),
@@ -84,6 +78,8 @@ class AnalyticsScreen extends ConsumerWidget {
                 ],
                 selected: {chartFilter},
                 onSelectionChanged: (newSelection) {
+                  // If you used the StateProvider, this works. 
+                  // If you used the Notifier, use ref.read(chartFilterProvider.notifier).setFilter(...)
                   ref.read(chartFilterProvider.notifier).state = newSelection.first;
                 },
               ),
@@ -99,8 +95,10 @@ class AnalyticsScreen extends ConsumerWidget {
                         data: (allRuns) {
                           final sessionRuns = sessionId == 'all_time'
                               ? allRuns
-                              : allRuns.where((run) => run.sessionId == sessionId).toList()
-                            ..sort((a, b) => a.timestamp.compareTo(b.timestamp)); // Ascending for trend
+                              : allRuns.where((run) => run.sessionId == sessionId).toList();
+                          
+                          // Sort for the trend chart: Ascending (oldest to newest)
+                          sessionRuns.sort((a, b) => a.id.compareTo(b.id)); 
                           
                           return equipmentAsync.maybeWhen(
                             data: (equipmentList) => RunChartWidget(

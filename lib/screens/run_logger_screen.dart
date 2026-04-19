@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/session_provider.dart';
-import '../providers/active_session_provider.dart'; 
 import '../providers/equipment_provider.dart';
 import '../widgets/numpad.dart';
 import '../widgets/sync_error_widget.dart';

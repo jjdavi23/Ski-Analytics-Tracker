@@ -20,7 +20,7 @@ class EquipmentSelector extends ConsumerWidget {
               profiles.any((p) => p.id == loggerState.selectedEquipmentId);
 
           return DropdownButtonFormField<String>(
-            value: exists ? loggerState.selectedEquipmentId : null,
+            initialValue: exists ? loggerState.selectedEquipmentId : null,
             decoration: const InputDecoration(
               labelText: 'Select Equipment',
               isDense: true,

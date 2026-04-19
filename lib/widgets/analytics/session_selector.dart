@@ -28,7 +28,7 @@ class SessionSelector extends ConsumerWidget {
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: DropdownButtonFormField<String>(
-                value: dropdownValue,
+                initialValue: dropdownValue,
                 decoration: const InputDecoration(
                   labelText: 'Select Training Session',
                   border: OutlineInputBorder(),
@@ -44,7 +44,7 @@ class SessionSelector extends ConsumerWidget {
                       child: Text(
                           '${session.location} (${session.date.month}/${session.date.day})'),
                     );
-                  }).toList(),
+                  }),
                 ],
                 onChanged: (id) {
                   if (id != null) {
