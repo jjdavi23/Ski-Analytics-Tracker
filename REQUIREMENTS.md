@@ -214,7 +214,7 @@ Goal: Move from local-only data to a secure, cloud-synced profile using Google A
 
  - Add methods to the Notifier that proxy to the AuthService for signing in and out.
 
-- [ ] **Step 7.3: Update LoginScreen UI**
+- [x] **Step 7.3: Update LoginScreen UI**
 
  - Create or update lib/screens/login_screen.dart.
 

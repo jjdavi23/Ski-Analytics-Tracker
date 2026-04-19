@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../controllers/auth_controller.dart';
+import '../providers/auth_provider.dart';
 import 'registration_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -30,13 +30,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return;
     }
 
-    final errorMessage = await ref
-        .read(authControllerProvider.notifier)
+    await ref
+        .read(authProvider.notifier)
         .signInWithEmail(email, password);
+  }
 
-    if (errorMessage != null && mounted) {
-      _showErrorSnackBar(errorMessage);
-    }
+  Future<void> _handleGoogleSignIn() async {
+    await ref.read(authProvider.notifier).signInWithGoogle();
   }
 
   void _showErrorSnackBar(String message) {
@@ -50,59 +50,91 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authControllerProvider);
+    final authState = ref.watch(authProvider);
+
+    // Listen for error states
+    ref.listen(authProvider, (previous, next) {
+      if (next is AsyncError) {
+        _showErrorSnackBar(next.error.toString());
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(),
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: authState.isLoading ? null : _handleSignIn,
+                    child: const Text('Sign In'),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // --- Google Sign In Button (High Contrast) ---
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: authState.isLoading ? null : _handleGoogleSignIn,
+                    icon: const Icon(Icons.login, color: Colors.white),
+                    label: const Text('Sign in with Google'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black, // High contrast
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      textStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const RegistrationScreen()),
+                    );
+                  },
+                  child: const Text('Sign up'),
+                ),
+              ],
+            ),
+          ),
+          // --- Loading Overlay ---
+          if (authState.isLoading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(color: Colors.white),
               ),
-              keyboardType: TextInputType.emailAddress,
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: authState.isLoading ? null : _handleSignIn,
-                child: authState.isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Sign In'),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const RegistrationScreen()),
-                );
-              },
-              child: const Text('Sign up'),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
