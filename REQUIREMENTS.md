@@ -224,7 +224,7 @@ Goal: Move from local-only data to a secure, cloud-synced profile using Google A
 
  - Ensure the screen handles the error state of the AsyncValue by showing a SnackBar.
 
-- [ ] **Step 7.4: Implement Auth Wrapper (Global Routing)**
+- [x] **Step 7.4: Implement Auth Wrapper (Global Routing)**
 
  - Update main.dart or create an AuthWrapper widget.
 
