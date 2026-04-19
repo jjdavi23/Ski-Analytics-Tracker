@@ -204,7 +204,7 @@ Goal: Move from local-only data to a secure, cloud-synced profile using Google A
 
  - Include a signOut() method and a getter for the current User?.
 
-- [ ] **Step 7.2: Create AuthProvider (Riverpod 3.0 Notifier)**
+- [x] **Step 7.2: Create AuthProvider (Riverpod 3.0 Notifier)**
 
  - Create lib/providers/auth_provider.dart.
 
