@@ -255,7 +255,7 @@ Session Migration: Add a method to SessionNotifier called moveSession(String ses
 
 Filtered Providers: Create sessionsInFolderProvider(String folderId) to reactively return only sessions belonging to that specific parent.
 
-- [ ] **Step 8.3: Sessions History UI**
+- [x] **Step 8.3: Sessions History UI**
 
 Expansion View: Create lib/screens/sessions_screen.dart using ListView and ExpansionTile.
 
@@ -266,6 +266,13 @@ Tap a Session inside a folder to set selectedSessionProvider and navigate to Ana
 Long-press a Session to open a "Move to Folder" menu.
 
 Management: Include a "New Folder" dialog triggered by a Floating Action Button.
+
+- [ ] **Step 8.4: Standardized Analytics Engine (Math Layer)**
+
+Normalization Logic: Implement a calculator in AnalyticsService that scales time differences to a 60-second reference:$$\Delta t_{60} = (\text{AvgTime}_B - \text{AvgTime}_A) \times \left( \frac{60}{\text{SessionAvg}} \right)$$
+
+
+Setup Comparison: Add a UI component to the AnalyticsScreen that allows selecting two pieces of equipment within the selected session to view this normalized delta.
   
   ### Phase 9: Advanced Logic & Performance
 
