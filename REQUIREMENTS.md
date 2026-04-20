@@ -247,7 +247,7 @@ Note: For existing sessions, create a default "Uncategorized" folder ID.
 
 Logic: Enforce a strict 1:1 relationship where a TrainingSession belongs to exactly one Folder.
 
--  [ ] **Step 8.2: Folder-Aware State Management**
+-  [x] **Step 8.2: Folder-Aware State Management**
 
 Folder Notifier: Create lib/providers/folder_provider.dart (Riverpod 3.0 Notifier) for creating, renaming, and deleting folders.
 

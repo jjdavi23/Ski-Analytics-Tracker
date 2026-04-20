@@ -29,4 +29,23 @@ class SessionNotifier extends StreamNotifier<List<TrainingSession>> {
       await dbService.deleteTrainingSession(id);
     }
   }
+
+  Future<void> moveSession(String sessionId, String newFolderId) async {
+    final dbService = ref.read(databaseServiceProvider);
+    if (dbService == null) return;
+
+    // We need to get the current session data to update its folderId
+    final sessions = await future;
+    final session = sessions.firstWhere((s) => s.id == sessionId);
+    
+    final updatedSession = session.copyWith(folderId: newFolderId);
+    await dbService.updateTrainingSession(updatedSession);
+  }
 }
+
+final sessionsInFolderProvider = Provider.family<AsyncValue<List<TrainingSession>>, String>((ref, folderId) {
+  final sessionsAsync = ref.watch(sessionProvider);
+  return sessionsAsync.whenData((sessions) => 
+    sessions.where((session) => session.folderId == folderId).toList()
+  );
+});

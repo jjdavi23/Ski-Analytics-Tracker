@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../models/equipment_profile.dart';
 import '../models/training_session.dart';
 import '../models/training_run.dart';
+import '../models/folder.dart';
 
 class DatabaseService {
   final String uid;
@@ -53,6 +54,31 @@ class DatabaseService {
 
   Future<void> deleteEquipmentProfile(String id) async {
     await _equipmentCollection.doc(id).delete();
+  }
+
+  // --- Folder CRUD ---
+
+  CollectionReference get _folderCollection =>
+      _db.collection('users').doc(uid).collection('folders');
+
+  Future<void> createFolder(Folder folder) async {
+    await _safeWrite(_folderCollection.doc(folder.id), folder.toMap());
+  }
+
+  Stream<List<Folder>> get folders {
+    return _folderCollection.snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Folder.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+    });
+  }
+
+  Future<void> updateFolder(Folder folder) async {
+    await _folderCollection.doc(folder.id).update(folder.toMap());
+  }
+
+  Future<void> deleteFolder(String id) async {
+    await _folderCollection.doc(id).delete();
   }
 
   // --- Training Session CRUD ---
