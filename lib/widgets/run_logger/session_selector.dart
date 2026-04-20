@@ -95,6 +95,7 @@ class SessionSelector extends ConsumerWidget {
                     snowConditionController.text.isNotEmpty) {
                   final newSession = TrainingSession(
                     id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    folderId: 'uncategorized', // Default folder for now
                     date: DateTime.now(),
                     location: locationController.text,
                     snowCondition: snowConditionController.text,

@@ -232,17 +232,52 @@ Goal: Move from local-only data to a secure, cloud-synced profile using Google A
 
  - If data is null, show LoginScreen. If data contains a User, show the MainNavigationWrapper (the Analytics/Logger dashboard).
   
-  ### Phase 8: Advanced Logic & Performance
+  
+  ### Phase 8: Hierarchical Session Organization and Normalization
+Goal: Implement a strict 1:1 folder hierarchy for training sessions and a standardized 60-second performance delta engine.
+
+- [x] **Step 8.1: Hierarchical Session Organization**
+
+Relational Data Models
+Folder Model: Create lib/models/folder.dart with id, name, and createdAt.
+
+Session Model Update: Update TrainingSession to include required String folderId.
+
+Note: For existing sessions, create a default "Uncategorized" folder ID.
+
+Logic: Enforce a strict 1:1 relationship where a TrainingSession belongs to exactly one Folder.
+
+-  [ ] **Step 8.2: Folder-Aware State Management**
+
+Folder Notifier: Create lib/providers/folder_provider.dart (Riverpod 3.0 Notifier) for creating, renaming, and deleting folders.
+
+Session Migration: Add a method to SessionNotifier called moveSession(String sessionId, String newFolderId) to handle the 1:1 reassignment.
+
+Filtered Providers: Create sessionsInFolderProvider(String folderId) to reactively return only sessions belonging to that specific parent.
+
+- [ ] **Step 8.3: Sessions History UI**
+
+Expansion View: Create lib/screens/sessions_screen.dart using ListView and ExpansionTile.
+
+Interaction: * Tap a Folder to expand/collapse.
+
+Tap a Session inside a folder to set selectedSessionProvider and navigate to Analytics.
+
+Long-press a Session to open a "Move to Folder" menu.
+
+Management: Include a "New Folder" dialog triggered by a Floating Action Button.
+  
+  ### Phase 9: Advanced Logic & Performance
 
 - Refining the "Bridge" aspect of the app—where data meets racing strategy.
 
-- [ ] **Step 8.1: Weather & Snow Metadata Integration**
+- [ ] **Step 9.1: Weather & Snow Metadata Integration**
 
   - Add optional fields to TrainingSession for temperature and wax used.
 
   - Update the SessionSelector to show snow conditions (e.g., "Icy," "Soft," "Man-made") as a secondary label.
 
-- [ ] **Step 8.2: Persistent Storage Audit**
+- [ ] **Step 9.2: Persistent Storage Audit**
 
   -Verify that shared_preferences correctly restores the activeSessionId after a hard app reset.
 
@@ -250,18 +285,18 @@ Goal: Move from local-only data to a secure, cloud-synced profile using Google A
 
   
 
-### Phase 9: UI/UX Polish & Deployment
+### Phase 10: UI/UX Polish & Deployment
 
-- [ ] **Step 9.1: Dark Mode & Thematic Styling**
+- [ ] **Step 10.1: Dark Mode & Thematic Styling**
 
  - Ensure high-contrast visibility for the RunTimeDisplay to be readable in bright sunlight on the snow.
 
  - Refine the RunChartWidget with proper axis limits so the line doesn't "flatline" at the bottom of the graph.
 
-[ ] **Step 9.2: App Icon & Splash Screen**
+[ ] **Step 10.2: App Icon & Splash Screen**
 
  - Generate a custom logo (The "Bridge" metaphor).
 
-[ ] **Step 9.3: Performance Testing**
+[ ] **Step 10.3: Performance Testing**
 
  - Stress-test the RunLoggerScreen with rapid-fire inputs to ensure the active_session_provider remains synced.
