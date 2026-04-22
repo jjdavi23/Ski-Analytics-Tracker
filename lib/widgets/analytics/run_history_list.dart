@@ -12,7 +12,6 @@ class RunHistoryList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sessionId = ref.watch(sessionIdProvider);
-    final activeSession = ref.watch(activeSessionProvider);
     final runsAsync = ref.watch(runProvider);
     final equipmentAsync = ref.watch(equipmentProvider);
 

@@ -31,10 +31,12 @@ class SessionSelector extends ConsumerWidget {
                   border: OutlineInputBorder(),
                 ),
                 items: sessions.map((session) {
+                  final tempLabel = session.temperature != null ? ' | ${session.temperature}°' : '';
+                  final waxLabel = session.wax != null ? ' | ${session.wax}' : '';
                   return DropdownMenuItem(
                     value: session.id,
                     child: Text(
-                        '${session.location} (${session.snowCondition})'),
+                        '${session.location} (${session.snowCondition}$tempLabel$waxLabel)'),
                   );
                 }).toList(),
                 onChanged: (sessionId) {
@@ -63,6 +65,8 @@ class SessionSelector extends ConsumerWidget {
   void _showCreateSessionDialog(BuildContext context, WidgetRef ref) {
     final locationController = TextEditingController();
     final snowConditionController = TextEditingController();
+    final temperatureController = TextEditingController();
+    final waxController = TextEditingController();
 
     showDialog(
       context: context,
@@ -70,20 +74,33 @@ class SessionSelector extends ConsumerWidget {
       builder: (context) {
         return AlertDialog(
           title: const Text('New Training Session'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: locationController,
-                decoration:
-                    const InputDecoration(labelText: 'Location (e.g. Whiteface)'),
-              ),
-              TextField(
-                controller: snowConditionController,
-                decoration:
-                    const InputDecoration(labelText: 'Snow (e.g. Firm/Icy)'),
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: locationController,
+                  decoration:
+                      const InputDecoration(labelText: 'Location (e.g. Whiteface)'),
+                ),
+                TextField(
+                  controller: snowConditionController,
+                  decoration:
+                      const InputDecoration(labelText: 'Snow (e.g. Firm/Icy)'),
+                ),
+                TextField(
+                  controller: temperatureController,
+                  decoration:
+                      const InputDecoration(labelText: 'Temperature (Optional)'),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                ),
+                TextField(
+                  controller: waxController,
+                  decoration:
+                      const InputDecoration(labelText: 'Wax (Optional)'),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -99,6 +116,8 @@ class SessionSelector extends ConsumerWidget {
                     date: DateTime.now(),
                     location: locationController.text,
                     snowCondition: snowConditionController.text,
+                    temperature: double.tryParse(temperatureController.text),
+                    wax: waxController.text.isNotEmpty ? waxController.text : null,
                   );
 
                   ref.read(sessionProvider.notifier).addSession(newSession);

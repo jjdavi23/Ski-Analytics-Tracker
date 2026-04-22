@@ -23,13 +23,11 @@ class SessionsScreen extends ConsumerWidget {
       body: sessionsAsync.when(
         data: (sessions) => foldersAsync.when(
           data: (folders) {
-            // Group sessions by folderId
             final Map<String, List<TrainingSession>> groupedSessions = {};
             for (var session in sessions) {
               groupedSessions.putIfAbsent(session.folderId, () => []).add(session);
             }
 
-            // Ensure "uncategorized" is handled even if no folder exists
             final hasUncategorized = groupedSessions.containsKey('uncategorized');
             
             return ListView(
@@ -41,24 +39,44 @@ class SessionsScreen extends ConsumerWidget {
             );
           },
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (err, _) => Center(child: Text('Error loading folders: $err')),
+          error: (err, _) => Center(child: Text('Error: $err')),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, _) => Center(child: Text('Error loading sessions: $err')),
+        error: (err, _) => Center(child: Text('Error: $err')),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showNewFolderDialog(context, ref),
         child: const Icon(Icons.create_new_folder),
-        tooltip: 'New Folder',
       ),
     );
   }
 
+  Widget _buildSessionTile(BuildContext context, WidgetRef ref, TrainingSession session) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      leading: const Icon(Icons.event_note, size: 24),
+      title: Text(session.location),
+      subtitle: Text('${DateFormat('MMM dd, yyyy').format(session.date)} - ${session.snowCondition}'),
+      trailing: IconButton(
+        icon: const Icon(Icons.drive_file_move_outlined, color: Colors.blueGrey),
+        onPressed: () => _showMoveToFolderMenu(context, ref, session),
+        tooltip: 'Move to Folder',
+      ),
+      onTap: () {
+        // Sets the global session filter
+        ref.read(sessionIdProvider.notifier).setSessionId(session.id);
+        // Teleports to the Analytics tab (index 3)
+        ref.read(mainNavigationProvider.notifier).setIndex(3);
+      },
+    );
+  }
+
+  // --- Utility methods kept same as your logic, ensuring .notifier calls ---
+  
   Widget _buildFolderTile(BuildContext context, WidgetRef ref, Folder folder, List<TrainingSession> sessions) {
     return ExpansionTile(
       leading: const Icon(Icons.folder, color: Colors.amber),
       title: Text(folder.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text('${sessions.length} sessions'),
       children: sessions.map((session) => _buildSessionTile(context, ref, session)).toList(),
     );
   }
@@ -66,24 +84,8 @@ class SessionsScreen extends ConsumerWidget {
   Widget _buildUncategorizedTile(BuildContext context, WidgetRef ref, List<TrainingSession> sessions) {
     return ExpansionTile(
       leading: const Icon(Icons.folder_open, color: Colors.grey),
-      title: const Text('Uncategorized', style: TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text('${sessions.length} sessions'),
+      title: const Text('Uncategorized'),
       children: sessions.map((session) => _buildSessionTile(context, ref, session)).toList(),
-    );
-  }
-
-  Widget _buildSessionTile(BuildContext context, WidgetRef ref, TrainingSession session) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 32.0),
-      leading: const Icon(Icons.event_note, size: 20),
-      title: Text(session.location),
-      subtitle: Text('${DateFormat('MMM dd, yyyy').format(session.date)} - ${session.snowCondition}'),
-      onTap: () {
-        ref.read(sessionIdProvider.notifier).setSessionId(session.id);
-        // Navigate to Analytics (index 3)
-        ref.read(mainNavigationProvider.notifier).state = 3;
-      },
-      onLongPress: () => _showMoveToFolderMenu(context, ref, session),
     );
   }
 
@@ -93,11 +95,7 @@ class SessionsScreen extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('New Folder'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(labelText: 'Folder Name'),
-          autofocus: true,
-        ),
+        content: TextField(controller: controller, autofocus: true),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
           ElevatedButton(
@@ -115,17 +113,12 @@ class SessionsScreen extends ConsumerWidget {
   }
 
   void _showMoveToFolderMenu(BuildContext context, WidgetRef ref, TrainingSession session) {
-    final foldersAsync = ref.read(folderProvider);
-    foldersAsync.whenData((folders) {
+    ref.read(folderProvider).whenData((folders) {
       showModalBottomSheet(
         context: context,
         builder: (context) => Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text('Move Session to Folder', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
             ...folders.where((f) => f.id != session.folderId).map((folder) => ListTile(
               leading: const Icon(Icons.folder),
               title: Text(folder.name),
@@ -134,16 +127,16 @@ class SessionsScreen extends ConsumerWidget {
                 Navigator.pop(context);
               },
             )),
+            // Add option to move back to Uncategorized if not already there
             if (session.folderId != 'uncategorized')
               ListTile(
                 leading: const Icon(Icons.folder_open),
-                title: const Text('Uncategorized'),
+                title: const Text('Move to Uncategorized'),
                 onTap: () {
                   ref.read(sessionProvider.notifier).moveSession(session.id, 'uncategorized');
                   Navigator.pop(context);
                 },
               ),
-            const SizedBox(height: 20),
           ],
         ),
       );

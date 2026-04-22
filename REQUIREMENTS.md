@@ -267,7 +267,7 @@ Long-press a Session to open a "Move to Folder" menu.
 
 Management: Include a "New Folder" dialog triggered by a Floating Action Button.
 
-- [ ] **Step 8.4: Standardized Analytics Engine (Math Layer)**
+- [x] **Step 8.4: Standardized Analytics Engine (Math Layer)**
 
 Normalization Logic: Implement a calculator in AnalyticsService that scales time differences to a 60-second reference:$$\Delta t_{60} = (\text{AvgTime}_B - \text{AvgTime}_A) \times \left( \frac{60}{\text{SessionAvg}} \right)$$
 

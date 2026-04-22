@@ -20,7 +20,6 @@ class EquipmentAnalytics {
 
 final analyticsProvider = Provider<List<EquipmentAnalytics>>((ref) {
   final sessionId = ref.watch(sessionIdProvider);
-  final activeSession = ref.watch(activeSessionProvider);
   
   // Use .value ?? [] to safely unwrap the AsyncValues from Firebase
   final allRuns = ref.watch(runProvider).value ?? [];
@@ -31,7 +30,7 @@ final analyticsProvider = Provider<List<EquipmentAnalytics>>((ref) {
   // Filter runs: either for a specific session or all runs if 'all_time'
   final List<TrainingRun> filteredRuns = sessionId == 'all_time' 
       ? allRuns 
-      : allRuns.where((run) => run.sessionId == activeSession?.id).toList();
+      : allRuns.where((run) => run.sessionId == sessionId).toList();
 
   if (filteredRuns.isEmpty) return [];
 

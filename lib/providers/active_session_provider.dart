@@ -43,6 +43,6 @@ final activeSessionProvider = Provider<TrainingSession?>((ref) {
       }
     },
     loading: () => null,
-    error: (_, _) => null,
+    error: (_, __) => null,
   );
 });

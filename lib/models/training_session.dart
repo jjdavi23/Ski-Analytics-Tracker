@@ -1,10 +1,12 @@
 //block of training
 class TrainingSession {
   final String id;
-  final String folderId; // Added folderId
+  final String folderId;
   final DateTime date;
   final String location;
   final String snowCondition;
+  final double? temperature; // Added temperature
+  final String? wax; // Added wax
 
 //things needed for TrainingSession object
   TrainingSession({
@@ -13,6 +15,8 @@ class TrainingSession {
     required this.date,
     required this.location,
     required this.snowCondition,
+    this.temperature,
+    this.wax,
   });
 
 //Creates new copy if edits are made
@@ -22,6 +26,8 @@ class TrainingSession {
     DateTime? date,
     String? location,
     String? snowCondition,
+    double? temperature,
+    String? wax,
   }) {
     return TrainingSession(
       id: id ?? this.id,
@@ -29,6 +35,8 @@ class TrainingSession {
       date: date ?? this.date,
       location: location ?? this.location,
       snowCondition: snowCondition ?? this.snowCondition,
+      temperature: temperature ?? this.temperature,
+      wax: wax ?? this.wax,
     );
   }
 
@@ -41,6 +49,8 @@ class TrainingSession {
       'date': date.toIso8601String(),
       'location': location,
       'snowCondition': snowCondition,
+      'temperature': temperature,
+      'wax': wax,
     };
   }
 
@@ -48,10 +58,12 @@ class TrainingSession {
   factory TrainingSession.fromMap(Map<String, dynamic> map) {
     return TrainingSession(
       id: map['id'] ?? '',
-      folderId: map['folderId'] ?? 'uncategorized', // Default for existing sessions
+      folderId: map['folderId'] ?? 'uncategorized',
       date: DateTime.parse(map['date'] ?? DateTime.now().toIso8601String()),
       location: map['location'] ?? '',
       snowCondition: map['snowCondition'] ?? '',
+      temperature: (map['temperature'] as num?)?.toDouble(),
+      wax: map['wax'],
     );
   }
 }

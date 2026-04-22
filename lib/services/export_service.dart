@@ -48,10 +48,8 @@ class ExportService {
     }
 
     // 2. Convert to CSV string
-    // For csv 8.0.0, the const constructor is generally preferred again
-    // 2. Convert to CSV string using the modern Codec
-// Version 8.0.0 uses CsvCodec for better memory performance
-  final String csvData = CsvCodec().encoder.convert(rows);
+    final String csvData = Csv().encode(rows);
+
 
     // 3. Save to temporary file
     final Directory tempDir = await getTemporaryDirectory();

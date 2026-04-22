@@ -21,16 +21,13 @@ class MainScreen extends ConsumerWidget {
       const AnalyticsScreen(),
     ];
 
-    void _onItemTapped(int index) {
-      ref.read(mainNavigationProvider.notifier).state = index;
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ski Racing Tracker'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
+            // Correctly calling the signOut method on the auth notifier
             onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
             tooltip: 'Logout',
           ),
@@ -42,7 +39,10 @@ class MainScreen extends ConsumerWidget {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
-        onTap: _onItemTapped,
+        // Using the setIndex method to update state safely
+        onTap: (index) {
+          ref.read(mainNavigationProvider.notifier).setIndex(index);
+        },
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(

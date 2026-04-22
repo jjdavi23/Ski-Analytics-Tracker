@@ -9,6 +9,7 @@ import '../widgets/analytics/session_selector.dart';
 import '../widgets/analytics/ranked_equipment_list.dart';
 import '../widgets/analytics/run_history_list.dart';
 import '../widgets/analytics/session_summary_card.dart';
+import '../widgets/analytics/equipment_comparison_card.dart';
 import '../widgets/run_chart_widget.dart';
 import '../services/export_service.dart';
 
@@ -78,9 +79,7 @@ class AnalyticsScreen extends ConsumerWidget {
                 ],
                 selected: {chartFilter},
                 onSelectionChanged: (newSelection) {
-                  // If you used the StateProvider, this works. 
-                  // If you used the Notifier, use ref.read(chartFilterProvider.notifier).setFilter(...)
-                  ref.read(chartFilterProvider.notifier).state = newSelection.first;
+                  ref.read(chartFilterProvider.notifier).setFilter(newSelection.first);
                 },
               ),
             ),
@@ -111,6 +110,7 @@ class AnalyticsScreen extends ConsumerWidget {
                         },
                         orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
                       ),
+                      const EquipmentComparisonCard(),
                       const RankedEquipmentList(),
                       const RunHistoryList(),
                       const SliverPadding(padding: EdgeInsets.only(bottom: 40)),
