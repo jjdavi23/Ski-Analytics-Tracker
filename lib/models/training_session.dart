@@ -6,7 +6,7 @@ class TrainingSession {
   final String location;
   final String snowCondition;
   final double? temperature; // Added temperature
-  final String? wax; // Added wax
+  final String? discipline; // Added discipline
 
 //things needed for TrainingSession object
   TrainingSession({
@@ -16,7 +16,7 @@ class TrainingSession {
     required this.location,
     required this.snowCondition,
     this.temperature,
-    this.wax,
+    this.discipline,
   });
 
 //Creates new copy if edits are made
@@ -27,7 +27,7 @@ class TrainingSession {
     String? location,
     String? snowCondition,
     double? temperature,
-    String? wax,
+    String? discipline,
   }) {
     return TrainingSession(
       id: id ?? this.id,
@@ -36,7 +36,7 @@ class TrainingSession {
       location: location ?? this.location,
       snowCondition: snowCondition ?? this.snowCondition,
       temperature: temperature ?? this.temperature,
-      wax: wax ?? this.wax,
+      discipline: discipline ?? this.discipline,
     );
   }
 
@@ -50,7 +50,7 @@ class TrainingSession {
       'location': location,
       'snowCondition': snowCondition,
       'temperature': temperature,
-      'wax': wax,
+      'discipline': discipline,
     };
   }
 
@@ -63,7 +63,7 @@ class TrainingSession {
       location: map['location'] ?? '',
       snowCondition: map['snowCondition'] ?? '',
       temperature: (map['temperature'] as num?)?.toDouble(),
-      wax: map['wax'],
+      discipline: map['discipline'],
     );
   }
 }

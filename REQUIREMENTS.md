@@ -144,7 +144,7 @@ Gemini: When reading this file to implement a step, you MUST adhere to the follo
 
   - Ensure it correctly filters data based on the activeSessionId so it only shows the graph for the currently selected session.
 
-- [x] **Step 4.7: Advanced Filtering - Wax/Ski Comparison**
+- [x] **Step 4.7: Advanced Filtering - Discipline/Ski Comparison**
 
   - Update the AnalyticsScreen to include a toggle or Chip-based filter that allows the racer to switch the chart view    between "All Runs" and "Compare by Equipment."
 
@@ -280,7 +280,7 @@ Setup Comparison: Add a UI component to the AnalyticsScreen that allows selectin
 
 - [ ] **Step 9.1: Weather & Snow Metadata Integration**
 
-  - Add optional fields to TrainingSession for temperature and wax used.
+  - Add optional fields to TrainingSession for temperature and discipline used.
 
   - Update the SessionSelector to show snow conditions (e.g., "Icy," "Soft," "Man-made") as a secondary label.
 

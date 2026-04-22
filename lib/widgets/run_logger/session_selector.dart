@@ -32,11 +32,11 @@ class SessionSelector extends ConsumerWidget {
                 ),
                 items: sessions.map((session) {
                   final tempLabel = session.temperature != null ? ' | ${session.temperature}°' : '';
-                  final waxLabel = session.wax != null ? ' | ${session.wax}' : '';
+                  final disciplineLabel = session.discipline != null ? ' | ${session.discipline}' : '';
                   return DropdownMenuItem(
                     value: session.id,
                     child: Text(
-                        '${session.location} (${session.snowCondition}$tempLabel$waxLabel)'),
+                        '${session.location} (${session.snowCondition}$tempLabel$disciplineLabel)'),
                   );
                 }).toList(),
                 onChanged: (sessionId) {
@@ -66,7 +66,7 @@ class SessionSelector extends ConsumerWidget {
     final locationController = TextEditingController();
     final snowConditionController = TextEditingController();
     final temperatureController = TextEditingController();
-    final waxController = TextEditingController();
+    final disciplineController = TextEditingController();
 
     showDialog(
       context: context,
@@ -95,9 +95,9 @@ class SessionSelector extends ConsumerWidget {
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 ),
                 TextField(
-                  controller: waxController,
+                  controller: disciplineController,
                   decoration:
-                      const InputDecoration(labelText: 'Wax (Optional)'),
+                      const InputDecoration(labelText: 'Discipline (e.g. SL, GS, SG)'),
                 ),
               ],
             ),
@@ -117,7 +117,7 @@ class SessionSelector extends ConsumerWidget {
                     location: locationController.text,
                     snowCondition: snowConditionController.text,
                     temperature: double.tryParse(temperatureController.text),
-                    wax: waxController.text.isNotEmpty ? waxController.text : null,
+                    discipline: disciplineController.text.isNotEmpty ? disciplineController.text : null,
                   );
 
                   ref.read(sessionProvider.notifier).addSession(newSession);
