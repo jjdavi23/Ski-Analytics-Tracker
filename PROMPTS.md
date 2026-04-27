@@ -85,3 +85,4 @@
 [x] 63. Read 'REQUIREMENTS.md' and implement step 9.1 and mark it completed in 'REQUIREMENTS.md'
 [x] 64. Read 'REQUIREMENTS.md' and implement step 9.2 and mark it completed in 'REQUIREMENTS.md'
 [x] 65. under equipment profile instead of asking for descprition, making separate text boxes that store: 'stack height' , 'base bevel', 'side edge' 'ski model', 'notes'
+[x] 66. automatically have the date on the end of the session name, so the user can easily identify when the session occured, also make sure that there are no bottom overflow errors on the run logger screen resulting from previous changes we made to equipment profiles

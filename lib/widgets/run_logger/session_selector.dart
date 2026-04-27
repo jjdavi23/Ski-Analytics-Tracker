@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import '../../models/training_session.dart';
 import '../../providers/session_provider.dart';
 import '../../providers/active_session_provider.dart';
@@ -20,7 +21,7 @@ class SessionSelector extends ConsumerWidget {
             child: sessionsAsync.when(
               skipLoadingOnRefresh: true,
               data: (sessions) => DropdownButtonFormField<String>(
-                initialValue: sessions.any((s) => s.id == (activeSession?.id ?? ''))
+                initialValue: sessions.any((s) => s.id == activeSession?.id)
                     ? activeSession?.id
                     : null,
                 decoration: const InputDecoration(
@@ -127,11 +128,15 @@ class SessionSelector extends ConsumerWidget {
               onPressed: () {
                 if (locationController.text.isNotEmpty &&
                     snowConditionController.text.isNotEmpty) {
+                  final now = DateTime.now();
+                  final dateStr = DateFormat('MM/dd').format(now);
+                  final locationWithDate = '${locationController.text} ($dateStr)';
+
                   final newSession = TrainingSession(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    id: now.millisecondsSinceEpoch.toString(),
                     folderId: 'uncategorized', // Default folder for now
-                    date: DateTime.now(),
-                    location: locationController.text,
+                    date: now,
+                    location: locationWithDate,
                     snowCondition: snowConditionController.text,
                     temperature: double.tryParse(temperatureController.text),
                     discipline: disciplineController.text.isNotEmpty ? disciplineController.text : null,
