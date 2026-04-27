@@ -43,7 +43,7 @@ final analyticsProvider = Provider<List<EquipmentAnalytics>>((ref) {
   for (var entry in groupedRuns.entries) {
     final equipment = allEquipment.firstWhere(
       (e) => e.id == entry.key,
-      orElse: () => EquipmentProfile(id: 'unknown', name: 'Unknown Gear', description: ''),
+      orElse: () => EquipmentProfile(id: 'unknown', name: 'Unknown Gear'),
     );
 
     final totalTime = entry.value.fold(0.0, (sum, run) => sum + run.timeInSeconds);

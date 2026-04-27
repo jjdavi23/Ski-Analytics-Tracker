@@ -133,7 +133,7 @@ class RunChartWidget extends StatelessWidget {
                              final run = runs[runIndex];
                              final equip = equipment.firstWhere(
                                (e) => e.id == run.equipmentProfileId,
-                               orElse: () => EquipmentProfile(id: '', name: 'Unknown', description: ''),
+                               orElse: () => EquipmentProfile(id: '', name: 'Unknown'),
                              );
                              return LineTooltipItem(
                                '${equip.name}\n${barSpot.y.toStringAsFixed(2)}s',

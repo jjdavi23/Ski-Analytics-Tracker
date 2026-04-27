@@ -57,7 +57,7 @@ class RunHistoryList extends ConsumerWidget {
                       final equipment = equipmentList.firstWhere(
                         (e) => e.id == run.equipmentProfileId,
                         orElse: () => EquipmentProfile(
-                            id: 'unknown', name: 'Unknown', description: ''),
+                            id: 'unknown', name: 'Unknown'),
                       );
 
                       return ListTile(

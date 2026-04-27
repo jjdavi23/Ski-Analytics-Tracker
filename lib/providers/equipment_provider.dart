@@ -26,14 +26,25 @@ class EquipmentNotifier extends StreamNotifier<List<EquipmentProfile>> {
     return dbService.equipmentProfiles;
   }
 
-  Future<void> addProfile(String name, String description) async {
+  Future<void> addProfile({
+    required String name,
+    String? stackHeight,
+    String? baseBevel,
+    String? sideEdge,
+    String? skiModel,
+    String? notes,
+  }) async {
     final dbService = ref.read(databaseServiceProvider);
     if (dbService == null) return;
 
     final newProfile = EquipmentProfile(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
-      description: description,
+      stackHeight: stackHeight,
+      baseBevel: baseBevel,
+      sideEdge: sideEdge,
+      skiModel: skiModel,
+      notes: notes,
     );
     await dbService.createEquipmentProfile(newProfile);
   }

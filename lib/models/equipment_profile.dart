@@ -2,24 +2,40 @@ class EquipmentProfile {
   //outline for ski setup
   final String id;
   final String name;
-  final String description;
+  final String? stackHeight;
+  final String? baseBevel;
+  final String? sideEdge;
+  final String? skiModel;
+  final String? notes;
 
   EquipmentProfile({
     //whats needed to make the equipment profile
     required this.id,
     required this.name,
-    required this.description,
+    this.stackHeight,
+    this.baseBevel,
+    this.sideEdge,
+    this.skiModel,
+    this.notes,
   });
 
   EquipmentProfile copyWith({
     String? id,
     String? name,
-    String? description,
+    String? stackHeight,
+    String? baseBevel,
+    String? sideEdge,
+    String? skiModel,
+    String? notes,
   }) {
     return EquipmentProfile(
       id: id ?? this.id,
       name: name ?? this.name,
-      description: description ?? this.description,
+      stackHeight: stackHeight ?? this.stackHeight,
+      baseBevel: baseBevel ?? this.baseBevel,
+      sideEdge: sideEdge ?? this.sideEdge,
+      skiModel: skiModel ?? this.skiModel,
+      notes: notes ?? this.notes,
     );
   }
 
@@ -28,7 +44,11 @@ class EquipmentProfile {
     return {
       'id': id,
       'name': name,
-      'description': description,
+      'stackHeight': stackHeight,
+      'baseBevel': baseBevel,
+      'sideEdge': sideEdge,
+      'skiModel': skiModel,
+      'notes': notes,
     };
   }
 
@@ -37,7 +57,21 @@ class EquipmentProfile {
     return EquipmentProfile(
       id: map['id'] ?? '',
       name: map['name'] ?? '',
-      description: map['description'] ?? '',
+      stackHeight: map['stackHeight'],
+      baseBevel: map['baseBevel'],
+      sideEdge: map['sideEdge'],
+      skiModel: map['skiModel'],
+      notes: map['notes'],
     );
+  }
+
+  // Helper to get a summary string for display in places that used description
+  String get description {
+    final List<String> parts = [];
+    if (skiModel != null && skiModel!.isNotEmpty) parts.add('Model: $skiModel');
+    if (stackHeight != null && stackHeight!.isNotEmpty) parts.add('Stack: $stackHeight');
+    if (baseBevel != null && baseBevel!.isNotEmpty) parts.add('Base: $baseBevel');
+    if (sideEdge != null && sideEdge!.isNotEmpty) parts.add('Side: $sideEdge');
+    return parts.isEmpty ? 'No details' : parts.join(', ');
   }
 }

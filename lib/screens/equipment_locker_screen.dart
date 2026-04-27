@@ -133,27 +133,63 @@ class EquipmentLockerScreen extends ConsumerWidget {
 
   void _showAddProfileDialog(BuildContext context, WidgetRef ref) {
     final nameController = TextEditingController();
-    final descriptionController = TextEditingController();
+    final stackHeightController = TextEditingController();
+    final baseBevelController = TextEditingController();
+    final sideEdgeController = TextEditingController();
+    final skiModelController = TextEditingController();
+    final notesController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('New Equipment Profile'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Profile Name (e.g., Fischer SL)'),
-                textCapitalization: TextCapitalization.words,
-              ),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(labelText: 'Description (e.g., Swix Blue)'),
-                textCapitalization: TextCapitalization.sentences,
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Profile Name (e.g., Slalom Setup 1)'),
+                  textCapitalization: TextCapitalization.words,
+                ),
+                TextField(
+                  controller: skiModelController,
+                  decoration: const InputDecoration(labelText: 'Ski Model (e.g., Fischer SL)'),
+                  textCapitalization: TextCapitalization.words,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: stackHeightController,
+                        decoration: const InputDecoration(labelText: 'Stack Height'),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: baseBevelController,
+                        decoration: const InputDecoration(labelText: 'Base Bevel'),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      ),
+                    ),
+                  ],
+                ),
+                TextField(
+                  controller: sideEdgeController,
+                  decoration: const InputDecoration(labelText: 'Side Edge Angle'),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                ),
+                TextField(
+                  controller: notesController,
+                  decoration: const InputDecoration(labelText: 'Notes'),
+                  textCapitalization: TextCapitalization.sentences,
+                  maxLines: 2,
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -164,8 +200,12 @@ class EquipmentLockerScreen extends ConsumerWidget {
               onPressed: () {
                 if (nameController.text.isNotEmpty) {
                   ref.read(equipmentProvider.notifier).addProfile(
-                        nameController.text,
-                        descriptionController.text,
+                        name: nameController.text,
+                        stackHeight: stackHeightController.text,
+                        baseBevel: baseBevelController.text,
+                        sideEdge: sideEdgeController.text,
+                        skiModel: skiModelController.text,
+                        notes: notesController.text,
                       );
                   Navigator.pop(context);
                 }
@@ -180,27 +220,63 @@ class EquipmentLockerScreen extends ConsumerWidget {
 
   void _showEditProfileDialog(BuildContext context, WidgetRef ref, EquipmentProfile profile) {
     final nameController = TextEditingController(text: profile.name);
-    final descriptionController = TextEditingController(text: profile.description);
+    final stackHeightController = TextEditingController(text: profile.stackHeight);
+    final baseBevelController = TextEditingController(text: profile.baseBevel);
+    final sideEdgeController = TextEditingController(text: profile.sideEdge);
+    final skiModelController = TextEditingController(text: profile.skiModel);
+    final notesController = TextEditingController(text: profile.notes);
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Edit Equipment Profile'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Profile Name'),
-                textCapitalization: TextCapitalization.words,
-              ),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
-                textCapitalization: TextCapitalization.sentences,
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Profile Name'),
+                  textCapitalization: TextCapitalization.words,
+                ),
+                TextField(
+                  controller: skiModelController,
+                  decoration: const InputDecoration(labelText: 'Ski Model'),
+                  textCapitalization: TextCapitalization.words,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: stackHeightController,
+                        decoration: const InputDecoration(labelText: 'Stack Height'),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: baseBevelController,
+                        decoration: const InputDecoration(labelText: 'Base Bevel'),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      ),
+                    ),
+                  ],
+                ),
+                TextField(
+                  controller: sideEdgeController,
+                  decoration: const InputDecoration(labelText: 'Side Edge Angle'),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                ),
+                TextField(
+                  controller: notesController,
+                  decoration: const InputDecoration(labelText: 'Notes'),
+                  textCapitalization: TextCapitalization.sentences,
+                  maxLines: 2,
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -213,12 +289,15 @@ class EquipmentLockerScreen extends ConsumerWidget {
                   ref.read(equipmentProvider.notifier).updateProfile(
                         profile.copyWith(
                           name: nameController.text,
-                          description: descriptionController.text,
+                          stackHeight: stackHeightController.text,
+                          baseBevel: baseBevelController.text,
+                          sideEdge: sideEdgeController.text,
+                          skiModel: skiModelController.text,
+                          notes: notesController.text,
                         ),
                       );
                   Navigator.pop(context);
                   
-                  // Best Practice: Check if mounted before showing SnackBar
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Profile updated')),

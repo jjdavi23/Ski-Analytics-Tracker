@@ -84,3 +84,4 @@
 [x] 62. replace the wax prompt when creating a new session with a prompt that asks for discipline
 [x] 63. Read 'REQUIREMENTS.md' and implement step 9.1 and mark it completed in 'REQUIREMENTS.md'
 [x] 64. Read 'REQUIREMENTS.md' and implement step 9.2 and mark it completed in 'REQUIREMENTS.md'
+[x] 65. under equipment profile instead of asking for descprition, making separate text boxes that store: 'stack height' , 'base bevel', 'side edge' 'ski model', 'notes'

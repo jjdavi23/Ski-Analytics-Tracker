@@ -20,7 +20,7 @@ class SessionSelector extends ConsumerWidget {
             child: sessionsAsync.when(
               skipLoadingOnRefresh: true,
               data: (sessions) => DropdownButtonFormField<String>(
-                initialValue: sessions.any((s) => s.id == activeSession?.id)
+                initialValue: sessions.any((s) => s.id == (activeSession?.id ?? ''))
                     ? activeSession?.id
                     : null,
                 decoration: const InputDecoration(

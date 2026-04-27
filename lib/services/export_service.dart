@@ -19,7 +19,7 @@ class ExportService {
       ['Snow Condition', session?.snowCondition ?? 'Various'],
       ['Export Date', DateTime.now().toIso8601String()],
       [], // Spacer
-      ['Run #', 'Time (s)', 'Gear Name', 'Gear Description', 'Timestamp', 'Session ID'],
+      ['Run #', 'Time (s)', 'Gear Name', 'Ski Model', 'Stack', 'Base/Side', 'Timestamp', 'Session ID'],
     ];
 
     // Sort runs chronologically
@@ -33,7 +33,6 @@ class ExportService {
         orElse: () => EquipmentProfile(
           id: 'unknown', 
           name: 'Unknown', 
-          description: 'N/A'
         ),
       );
 
@@ -41,7 +40,9 @@ class ExportService {
         i + 1,
         run.timeInSeconds,
         gear.name,
-        gear.description,
+        gear.skiModel ?? 'N/A',
+        gear.stackHeight ?? 'N/A',
+        '${gear.baseBevel ?? '?'}/${gear.sideEdge ?? '?'}',
         run.timestamp.toIso8601String(),
         run.sessionId,
       ]);
