@@ -52,7 +52,6 @@ class RunLoggerScreen extends ConsumerWidget {
             
             // --- Session Selector ---
             const logger.SessionSelector(),
-            const Divider(),
             
             // --- Time Display ---
             const RunTimeDisplay(),
@@ -67,17 +66,17 @@ class RunLoggerScreen extends ConsumerWidget {
               ),
             ),
             
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             
             // --- Equipment Selector ---
             const EquipmentSelector(),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
 
             // --- Save Button ---
             const SaveRunButton(),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 20),
           ],
         ),
       ),

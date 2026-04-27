@@ -10,29 +10,28 @@ class RunTimeDisplay extends ConsumerWidget {
     final timeDisplayStr = ref.watch(runLoggerControllerProvider.select((s) => s.timeInput));
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
         children: [
           const Text(
             'Run Time (s)',
             style: TextStyle(
-                fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w500),
+                fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w500),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.black87, // High contrast background
+              color: Colors.grey[200],
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blueGrey, width: 2),
+              border: Border.all(color: Colors.grey[300]!),
             ),
             child: Text(
               timeDisplayStr.isEmpty ? '00.00' : timeDisplayStr,
               style: const TextStyle(
-                fontSize: 40,
+                fontSize: 36,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Courier',
-                color: Colors.yellowAccent, // Bright text for sunlight readability
               ),
             ),
           ),

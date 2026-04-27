@@ -14,7 +14,7 @@ class SessionSelector extends ConsumerWidget {
     final activeSession = ref.watch(activeSessionProvider);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: Row(
         children: [
           Expanded(

@@ -18,7 +18,7 @@ class SaveRunButton extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: SizedBox(
             width: double.infinity,
-            height: 50,
+            height: 44,
             child: ElevatedButton(
               onPressed: (activeSession == null || loggerState.isLoading)
                   ? null

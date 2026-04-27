@@ -88,3 +88,4 @@
 [x] 66. automatically have the date on the end of the session name, so the user can easily identify when the session occured, also make sure that there are no bottom overflow errors on the run logger screen resulting from previous changes we made to equipment profiles
 [x] 67.When session is not selected only display the location, date, and discipline, and do it all on one line so that there is no pixel overflow
 [x] 68. Read 'REQUIREMENTS.md' and implement step 10.1 and mark it completed in 'REQUIREMENTS.md'
+[x] 69. Condense the runlogger screen, so you dont need to scroll down to see and edit the whole screen

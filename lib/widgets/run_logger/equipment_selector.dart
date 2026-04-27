@@ -12,7 +12,7 @@ class EquipmentSelector extends ConsumerWidget {
     final loggerState = ref.watch(runLoggerControllerProvider);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: equipmentProfilesAsync.when(
         skipLoadingOnRefresh: true,
         data: (profiles) {
