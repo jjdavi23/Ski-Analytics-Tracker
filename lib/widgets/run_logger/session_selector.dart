@@ -31,12 +31,29 @@ class SessionSelector extends ConsumerWidget {
                   border: OutlineInputBorder(),
                 ),
                 items: sessions.map((session) {
-                  final tempLabel = session.temperature != null ? ' | ${session.temperature}°' : '';
-                  final disciplineLabel = session.discipline != null ? ' | ${session.discipline}' : '';
+                  final tempLabel = session.temperature != null ? '${session.temperature}°' : '';
+                  final disciplineLabel = session.discipline != null ? session.discipline : '';
+                  
+                  // Create a detailed secondary label
+                  final details = [
+                    session.snowCondition,
+                    if (tempLabel.isNotEmpty) tempLabel,
+                    if (disciplineLabel != null && disciplineLabel.isNotEmpty) disciplineLabel,
+                  ].join(' | ');
+
                   return DropdownMenuItem(
                     value: session.id,
-                    child: Text(
-                        '${session.location} (${session.snowCondition}$tempLabel$disciplineLabel)'),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(session.location, style: const TextStyle(fontWeight: FontWeight.w500)),
+                        Text(
+                          details,
+                          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
                   );
                 }).toList(),
                 onChanged: (sessionId) {

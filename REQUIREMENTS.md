@@ -278,7 +278,7 @@ Setup Comparison: Add a UI component to the AnalyticsScreen that allows selectin
 
 - Refining the "Bridge" aspect of the app—where data meets racing strategy.
 
-- [ ] **Step 9.1: Weather & Snow Metadata Integration**
+- [x] **Step 9.1: Weather & Snow Metadata Integration**
 
   - Add optional fields to TrainingSession for temperature and discipline used.
 
