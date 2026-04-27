@@ -22,9 +22,9 @@ class RunTimeDisplay extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: Colors.black87, // High contrast background
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[300]!),
+              border: Border.all(color: Colors.blueGrey, width: 2),
             ),
             child: Text(
               timeDisplayStr.isEmpty ? '00.00' : timeDisplayStr,
@@ -32,6 +32,7 @@ class RunTimeDisplay extends ConsumerWidget {
                 fontSize: 40,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Courier',
+                color: Colors.yellowAccent, // Bright text for sunlight readability
               ),
             ),
           ),

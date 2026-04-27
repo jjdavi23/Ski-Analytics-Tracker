@@ -87,40 +87,54 @@ class RunChartWidget extends StatelessWidget {
       );
     }
 
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Performance Trend',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                if (showByEquipment)
+    // Calculate dynamic Y-axis range to prevent "flatlining"
+      final List<double> allTimes = runs.map((r) => r.timeInSeconds).toList();
+      final double minTime = allTimes.reduce((a, b) => a < b ? a : b);
+      final double maxTime = allTimes.reduce((a, b) => a > b ? a : b);
+
+      // Add 10% vertical padding
+      final double timeRange = maxTime - minTime;
+      final double verticalPadding = timeRange == 0 ? 1.0 : timeRange * 0.15;
+
+      final double minY = (minTime - verticalPadding).clamp(0, double.infinity);
+      final double maxY = maxTime + verticalPadding;
+
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   const Text(
-                    'Compared by Gear',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    'Performance Trend',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            AspectRatio(
-              aspectRatio: 1.7,
-              child: LineChart(
-                LineChartData(
-                  gridData: const FlGridData(show: true, drawVerticalLine: false),
-                  titlesData: _buildTitles(),
-                  borderData: FlBorderData(
-                    show: true,
-                    border: Border(
-                      bottom: BorderSide(color: Colors.grey[300]!, width: 1),
-                      left: BorderSide(color: Colors.grey[300]!, width: 1),
+                  if (showByEquipment)
+                    const Text(
+                      'Compared by Gear',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
-                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              AspectRatio(
+                aspectRatio: 1.7,
+                child: LineChart(
+                  LineChartData(
+                    minY: minY,
+                    maxY: maxY,
+                    gridData: const FlGridData(show: true, drawVerticalLine: false),
+                    titlesData: _buildTitles(),
+                    borderData: FlBorderData(
+                      show: true,
+                      border: Border(
+                        bottom: BorderSide(color: Colors.grey[300]!, width: 1),
+                        left: BorderSide(color: Colors.grey[300]!, width: 1),
+                      ),
+                    ),
                   lineBarsData: lineBarsData,
                   lineTouchData: LineTouchData(
                     enabled: true,
