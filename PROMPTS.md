@@ -83,3 +83,4 @@
 [x] 61. Add a button that allows you to add the session to a folder and access it through that folder under the session history screen
 [x] 62. replace the wax prompt when creating a new session with a prompt that asks for discipline
 [x] 63. Read 'REQUIREMENTS.md' and implement step 9.1 and mark it completed in 'REQUIREMENTS.md'
+[x] 64. Read 'REQUIREMENTS.md' and implement step 9.2 and mark it completed in 'REQUIREMENTS.md'
